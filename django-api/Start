@@ -1,0 +1,11 @@
+#! /bin/bash
+
+# set -o errexit
+# set -o pipefail
+# set -o nounset
+python3 /app/manage.py makemigrations --no-input 
+python3 /app/manage.py migrate --no-input
+python3 /app/manage.py collectstatic --no-input
+
+# python3 /app/manage.py createsuperuser --username admin123  --email 'changeme@email.com' --noinput 
+python3 /app/manage.py runserver 0.0.0.0:8000

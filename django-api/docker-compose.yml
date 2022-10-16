@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    command: /Start 
+    logging:
+      driver: "awslogs"
+      options:
+        awslogs-region: "us-east-1"
+        awslogs-group: "portfolio-ec2-loggroup"
+        awslogs-stream: "Django-Logstream"
+    container_name: api
+    volumes: 
+      - .:/app 
+      - static-volume:/app/staticfiles 
+      - media-volume:/app/mediafiles
+    expose: 
+      - "8000"
+    env_file:
+      - ./.env
+    networks: 
+      - portfolio-website
+
+  nginx: 
+    restart: always 
+    depends_on:
+      - api 
+    volumes:
+      - static-volume:/app/staticfiles
+      - media-volume:/app/mediafiles
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - portfolio-website
+
+
+networks: 
+  portfolio-website:
+    driver: bridge 
+
+volumes:
+  static-volume: 
+  media-volume: 
