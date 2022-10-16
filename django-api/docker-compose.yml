@@ -10,8 +10,8 @@ services:
       driver: "awslogs"
       options:
         awslogs-region: "us-east-1"
-        awslogs-group: "portfolio-ec2-loggroup"
-        awslogs-stream: "Django-Logstream"
+        awslogs-group: "Add Log Name here"
+        awslogs-stream: "Add Stream here"
     container_name: api
     volumes: 
       - .:/app 
@@ -22,7 +22,7 @@ services:
     env_file:
       - ./.env
     networks: 
-      - portfolio-website
+      - instagram-clone
 
   nginx: 
     restart: always 
@@ -37,11 +37,11 @@ services:
     ports:
       - "8080:80"
     networks:
-      - portfolio-website
+      - instagram-clone
 
 
 networks: 
-  portfolio-website:
+  instagram-clone:
     driver: bridge 
 
 volumes:

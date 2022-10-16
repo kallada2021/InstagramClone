@@ -18,7 +18,7 @@ services:
     depends_on: 
       - postgres 
     networks: 
-      - portfolio-website
+      - instagram-clone
   
   postgres: 
     image: postgres:13.4-alpine
@@ -30,7 +30,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: portfolio
     networks:
-      - portfolio-website
+      - instagram-clone
 
   nginx: 
     restart: always 
@@ -45,11 +45,11 @@ services:
     ports:
       - "8080:80"
     networks:
-      - portfolio-website
+      - instagram-clone
 
 
 networks: 
-  portfolio-website:
+  instagram-clone:
     driver: bridge 
 
 volumes:
