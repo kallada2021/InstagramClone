@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "api.apps.ApiConfig",
     "rest_framework",
+    "rest_framework.authtoken"
     "corsheaders",
 ]
 
@@ -148,3 +149,20 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+auth_classes = [ 
+    "rest_framework.authentication.SessionAuthentication",
+    "api.auth.TokenAuthentication"
+]
+
+if DEBUG:
+    auth_classes = [ 
+        "api.auth.TokenAuthentication"
+    ]       
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES" : auth_classes,
+    "DEFAULT_PERMISSION_CLASSES" : [
+        "rest_framework.permissions.IsAuthenticationOrReadOnly"
+    ]
+}
