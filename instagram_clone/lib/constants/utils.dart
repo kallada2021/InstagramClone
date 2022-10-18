@@ -10,8 +10,19 @@ class Utils {
   Color get color => getTheme ? Colors.white : Colors.black;
   Size get screenSize => MediaQuery.of(context).size;
 
+  static Color kSecondaryColor = Colors.purple[700]!;
+  static Color kBackgroundColor = Colors.white;
+  static Color kGrayBackgroundColor = Colors.blueGrey[200]!;
+  static Color kLightBlue = Colors.blue[200]!;
+  static Color kSelectedNavBarColor = Colors.cyan[800]!;
+  static const Color unselectedNavBarColor = Colors.teal;
+  static Color kBorderColor = Colors.deepPurple[800]!;
+  static Color kCardBackgroundColor = Colors.purple[100]!;
+  static Color kLightPink = Colors.pink[200]!;
+
   static const kLineHeight = 30.0;
   static const kLineWidth = 40.0;
+
   static TextStyle kAppBarTextStyle =
       const TextStyle(color: Colors.white, fontSize: 16);
 

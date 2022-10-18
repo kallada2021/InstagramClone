@@ -28,7 +28,7 @@ services:
     environment:
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: portfolio
+      POSTGRES_DB: instagramclone
     networks:
       - instagram-clone
 

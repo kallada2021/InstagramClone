@@ -5,8 +5,11 @@ import '../constants/utils.dart';
 
 AppBar customAppBar(BuildContext context) {
   Size size = Utils(context).screenSize;
+  bool isDark = Utils(context).getTheme;
+
   return size.width > 1050
       ? AppBar(
+          backgroundColor: isDark ? Utils.kLightPink : Utils.kSecondaryColor,
           title: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -104,6 +107,7 @@ AppBar customAppBar(BuildContext context) {
           ),
         )
       : AppBar(
+          backgroundColor: Utils.kSecondaryColor,
           title: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -114,11 +118,23 @@ AppBar customAppBar(BuildContext context) {
                 ),
                 IconButton(
                   color: Colors.white,
-                  tooltip: "Messsages",
+                  tooltip: "Post",
                   onPressed: () {
                     if (Navigator.canPop(context)) {
                       Navigator.pop(context);
                     }
+                    //TODO: Link to add post page
+                  },
+                  icon: const Icon(IconlyBold.plus),
+                ),
+                IconButton(
+                  color: Colors.white,
+                  tooltip: "Messages",
+                  onPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                    //TODO: Link to Message page
                   },
                   icon: const Icon(IconlyBold.message),
                 ),
