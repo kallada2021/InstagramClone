@@ -5,10 +5,10 @@ from django.db import models
 class Profile(models.Model):
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, unique=True)
     email = models.EmailField()
-    phone = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
+    phone = models.CharField(max_length=255, blank=True)
+    location = models.CharField(max_length=255, blank = True)
     aboutme = models.TextField()
     status = models.CharField(max_length=255, default="unavailable")
     profile_image = models.CharField(max_length=255, default='https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y')
@@ -22,4 +22,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
+
+
 
