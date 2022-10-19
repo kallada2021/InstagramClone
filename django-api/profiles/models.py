@@ -19,7 +19,7 @@ class Profile(models.Model):
     status = models.CharField(max_length=255, default="unavailable")
     profile_image = models.CharField(max_length=255, default='https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y')
     active = models.BooleanField(default=True)
-    age = models.IntegerField()
+    age = models.IntegerField(default =0)
     gender = models.CharField(
         max_length=8,
         choices=GENDER,

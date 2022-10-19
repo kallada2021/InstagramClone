@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "profiles.apps.ProfilesConfig",
     "posts.apps.PostsConfig",
+    "messaging.apps.MessagingConfig",
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
