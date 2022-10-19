@@ -1,0 +1,48 @@
+---
+name: Test and Lint Django  
+
+on: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment
+        required: true 
+        options:
+          - dev
+        type: choice 
+
+jobs:
+  test-lint:
+    name: Test and Lint
+    runs-on: ubuntu-22.04
+
+    defaults:
+      run:
+        shell: bash 
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9 
+
+      - name: Install dependencies 
+        id: install-dependencies
+        run: |
+          cd django-api
+          python -m pip install --upgrade pip 
+          pip install -r requirements.txt
+          pip install -r requirements.dev.txt
+
+      - name: Test 
+        run: |
+          cd django-api 
+          python manage.py test
+
+      - name: Lint 
+        run:  |
+          cd django-api
+          flake8

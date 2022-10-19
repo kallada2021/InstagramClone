@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/widgets/auth_button.dart';
 import 'package:instagram_clone/widgets/customappbar.dart';
 import 'package:instagram_clone/widgets/textfield.dart';
 
@@ -10,7 +11,7 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  // TODO: add email address controller
+  // TODO: add firstname, lastname, and email address controller
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -44,6 +45,17 @@ class _SignupScreenState extends State<SignupScreen> {
                 controller: _passwordController,
                 hintText: "Username",
                 inputType: TextInputType.text,
+                isPassword: true,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              AuthButton(
+                func: () {
+                  //TODO: implement signup
+                  print("Signup");
+                },
+                buttonText: "Signup",
               ),
             ],
           ),

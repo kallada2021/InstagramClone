@@ -1,11 +1,13 @@
 import 'package:equatable/equatable.dart';
 
 class UserModel extends Equatable {
-  final int id;
-  final String firstname;
-  final String lastname;
-  final String username;
-  final String password;
+  int? id;
+  String? firstname;
+  String? lastname;
+  String? username;
+  String? password;
+  String? emailAddress;
+  String? token;
 
   UserModel({
     required this.id,
@@ -13,7 +15,28 @@ class UserModel extends Equatable {
     required this.lastname,
     required this.username,
     required this.password,
+    required this.emailAddress,
   });
+
+  UserModel.fromJson(Map<String, dynamic> json) {
+    id = json["id"];
+    firstname = json["firstname"];
+    lastname = json["lastname"];
+    username = json["username"];
+    emailAddress = json["email"];
+    token = json["token"];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data["id"] = id;
+    data["firstname"] = firstname;
+    data["lastname"] = lastname;
+    data["username"] = username;
+    data["password"] = password;
+    data["email"] = emailAddress;
+    return data;
+  }
 
   @override
   List<Object?> get props => [
@@ -22,6 +45,7 @@ class UserModel extends Equatable {
         lastname,
         username,
         password,
+        emailAddress,
       ];
 
   @override

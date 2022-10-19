@@ -1,6 +1,6 @@
 {
     "editor.formatOnSave": true,
-    "python.pythonPath": "venv/bin/python3",
+    "python.venvPath": "django-api/venv/bin/python3",
     "python.sortImports.args": [
         "--profile=black",
     ],
