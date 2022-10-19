@@ -61,8 +61,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "api.apps.ApiConfig",
+    "profiles.apps.ProfilesConfig",
+    "posts.apps.PostsConfig",
     "rest_framework",
-    "rest_framework.authtoken"
+    "rest_framework.authtoken",
     "corsheaders",
 ]
 
@@ -163,6 +165,6 @@ if DEBUG:
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES" : auth_classes,
     "DEFAULT_PERMISSION_CLASSES" : [
-        "rest_framework.permissions.IsAuthenticationOrReadOnly"
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ]
 }

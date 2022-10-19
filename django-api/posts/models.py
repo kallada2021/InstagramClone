@@ -1,6 +1,6 @@
 from tabnanny import verbose
 from django.db import models
-from profiles import Profile
+from profiles.models import Profile
 
 # TODO: add image url
 class Post(models.Model):

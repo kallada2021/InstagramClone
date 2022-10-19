@@ -20,7 +20,7 @@ AppBar customAppBar(BuildContext context) {
                       width: Utils.kLineWidth,
                     ),
                     const Text(
-                      "MAGNOLIA IT SOLUTIONS",
+                      "INSTAGRAM CLONE",
                       style: TextStyle(
                         fontSize: 16,
                       ),
@@ -112,7 +112,7 @@ AppBar customAppBar(BuildContext context) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Instagram Clone"),
+                const Text("INSTAGRAM CLONE"),
                 const SizedBox(
                   width: Utils.kLineHeight,
                 ),

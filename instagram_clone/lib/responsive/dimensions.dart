@@ -1,0 +1,1 @@
+const kWebScreenSize = 650;
