@@ -1,2 +1,1 @@
-from django.shortcuts import render
-from api.auth import TokenAuthentication
+from api.auth import TokenAuthentication  # noqa
