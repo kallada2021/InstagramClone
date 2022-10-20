@@ -31,6 +31,8 @@ services:
       POSTGRES_DB: instagramclone
     networks:
       - instagram-clone
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
 
   nginx: 
     restart: always 
@@ -46,6 +48,7 @@ services:
       - "8080:80"
     networks:
       - instagram-clone
+    
 
 
 networks: 
@@ -55,3 +58,4 @@ networks:
 volumes:
   static-volume: 
   media-volume: 
+  dev-db-data:
