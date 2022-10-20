@@ -1,6 +1,3 @@
-from random import choices
-from telnetlib import STATUS
-
 from django.db import models
 
 

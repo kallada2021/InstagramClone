@@ -155,12 +155,13 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-auth_classes = ["rest_framework.authentication.SessionAuthentication", "api.auth.TokenAuthentication"]
+AUTH_USER_MODEL = "api.User"
+# auth_classes = ["rest_framework.authentication.SessionAuthentication", "api.auth.TokenAuthentication"]
 
-if DEBUG:
-    auth_classes = ["api.auth.TokenAuthentication"]
+# if DEBUG:
+#     auth_classes = ["api.auth.TokenAuthentication"]
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": auth_classes,
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
-}
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": auth_classes,
+#     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
+# }
