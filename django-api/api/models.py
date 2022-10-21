@@ -11,13 +11,22 @@ from django.db import models
 class UserManager(BaseUserManager):
     """Manages users"""
 
+    # TODO: normalize email
     def create_user(self, email, username, password=None, **extras):
         """Create and Save a new user"""
+        if not email:
+            raise ValueError("User must have an email address.")
+
         user = self.model(email=email, **extras)
         user.set_password(password)
         user.save(using=self._db)
 
         return user
+
+    # TODO: create superuser function
+    def create_superuser(self, username, email, password):
+        """Creates a superuser"""
+        pass
 
 
 # TODO: add fields to user model
