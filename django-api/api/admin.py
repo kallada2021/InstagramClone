@@ -6,18 +6,19 @@ from django.utils.translation import gettext_lazy as _
 from api import models
 
 
-# TODO: Add fields to the Admin display fieldsets
 class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
 
     ordering = ["id"]
     list_display: tuple = ["email", "username"]
     fieldsets = (
-        (None, {"fields": ("email", "password")}),
+        (None, {"fields": ("username","email", "password",)}),
         (
             _("Permissions"),
             {
                 "fields": (
+                    "firstname",
+                    "lastname",
                     "is_active",
                     "is_staff",
                     "is_superuser",
@@ -27,13 +28,17 @@ class UserAdmin(BaseUserAdmin):
         (_("Important dates"), {"fields": ("last_login",)}),
     )
     readonly_fields = ["last_login"]
-    # TODO: add remaining fieldsets
+
     add_fieldsets = (
         (
             None,
             {
                 "classes": ("wide",),
                 "fields": (
+                    "username",
+                    "email",
+                    "firstname",
+                    "lastname",
                     "password1",
                     "password2",
                     "is_active",

@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 CREATE_USER_URL = reverse("api:create")
-TOKEN_URL = reverse("")  # TODO add url
+TOKEN_URL = reverse("api:token")
 
 
 def create_user(**params):
@@ -23,44 +23,64 @@ class PublicUserApiTests(TestCase):
 
     def test_create_user_success(self):
         """Test creating a user"""
-        payload: dict = {"username": "Test"}  # TODO: fill out payload dict
+        payload: dict = {"username": "Test","email":"admin@example.com", "password":"Testp12"}
         res = self.client.post(CREATE_USER_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
-        user = get_user_model().objects.get(username=payload[""])  # TODO: Add key
-        self.assertTrue(user.check_password(payload[""]))  # TODO: Add key
+        user = get_user_model().objects.get(username=payload["username"])
+        self.assertTrue(user.check_password(payload["password"]))
+        self.assertNotIn("password", res.data)
 
-        # TODO: assert password is not in res.data that is returned
 
     def test_user_with_email_exists_error(self):
         """Test error returned if email already exists"""
-        payload: dict = {}  # TODO create payload
+        payload: dict = {"username": "Test","email":"admin@example.com", "password":"Testp12"}
         create_user(**payload)
 
         res = self.client.post(CREATE_USER_URL, payload)
-
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # TODO write test for duplicate username
+    def test_user_with_username_exists_error(self):
+        """Test error returned if username already exists"""
+        payload: dict = {"username": "Test","email":"admin@example.com", "password":"Testp12"}
+        create_user(**payload)
+        res = self.client.post(CREATE_USER_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
 
     def test_password_too_short_error(self):
         """Test error returned if password is too short"""
-        payload: dict = {}  # TODO: create payload
-
-        res = None  # TODO: write post to url function
-        # TODO: assert bad request returned
+        payload: dict = {"username": "Test","email":"admin@example.com", "passowrd":"Test"}
+        res = self.client.post(CREATE_USER_URL,payload)
         user_exists: bool = get_user_model().objects.filter(email=payload["email"]).exists()
-        # Check that user does not exist
+        self.assertFalse(user_exists)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
 
     def test_create_token_for_user(self):
         """Test generates token for valid credentials"""
-        user_details = {"username": "Testing", "password": "testuserpw"}
+        user_details = {"username": "Testing", "password": "testuserpw", "email": "admin@example.com"}
         create_user(**user_details)
-
-        payload = {"username": user_details["username"], "password": user_details["password"]}
-
+        payload: dict = {"username": user_details["username"], "password": user_details["password"], "email": user_details["email"]}
         res = self.client.post(TOKEN_URL, payload)
         self.assertIn("token", res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-    # TODO: write tests for invalid credentials and no password
+    def test_invalidcredentials_error(self):
+        """Test error returned if invalid credentials"""
+        user_details = {"username": "Testing","email":"admin@example.com", "password": "testuserpw"}
+        create_user(**user_details)
+        payload: dict = {"username": "Test","email":"admin@example.com", "password":"Testp12"}
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertNotIn("token", res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_nopassword_error(self):
+        """Test error returned if no password"""
+        user_details = {"username": "Testing","email":"admin@example.com", "password": "testuserpw"}
+        create_user(**user_details)
+        payload: dict = {"username": "Test","email":"admin@example.com", "password":""}
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertNotIn("token", res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        
