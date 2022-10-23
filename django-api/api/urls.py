@@ -1,8 +1,13 @@
 from django.urls import path
-from rest_framework.authtoken.views import obtain_auth_token
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from . import views # noqa
+from . import views
+
+app_name = "api"
 
 urlpatterns = [
-    path("auth/", obtain_auth_token),
+    path("schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path("docs/", SpectacularSwaggerView.as_view(url_name="api-schema"), name="api-docs"),
+    # path("user/create/", TODO: import view, name="create"),
+    # TODO create token url
 ]
