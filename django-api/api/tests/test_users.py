@@ -7,8 +7,7 @@ from rest_framework.test import APIClient
 
 CREATE_USER_URL = reverse("api:create")
 TOKEN_URL = reverse("api:token")
-# create url and tests for logged in users
-
+ME_URL = reverse("api:me")
 
 def create_user(**params):
     """Create and return a test user"""
@@ -48,7 +47,7 @@ class PublicUserApiTests(TestCase):
 
     def test_password_too_short_error(self):
         """Test error returned if password is too short"""
-        payload: dict = {"username": "Test", "email": "admin@example.com", "passowrd": "Test"}
+        payload: dict = {"username": "Test", "email": "admin@example.com", "password": "Test"}
 
         res = self.client.post(CREATE_USER_URL, payload)
         user_exists: bool = get_user_model().objects.filter(email=payload["email"]).exists()
@@ -86,19 +85,21 @@ class PublicUserApiTests(TestCase):
         self.assertNotIn("token", res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # TODO: finish test
     def test_retrieve_user_unauthorized(self):
         """Test authentication is required for users."""
-        pass
+        payload: dict = {"username": "Test", "email": "admin@example.com", "password": "Test123"}
+        res = self.client.get(ME_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 
 class PrivateUserApiTests(TestCase):
     """Test API requests that require authentication"""
-
-    # TODO: finish adding fields to setup test user
     def setUp(self):
         self.user = create_user(
+            username="Test",
             password="testing123",
+            email="admin@example.com",
         )
 
         self.client = APIClient()

@@ -22,7 +22,10 @@ class CreateTokenView(ObtainAuthToken):
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticated user"""
 
-    # TODO set serializer, permissions and authentication
+    serializer_class = UserSerializer
+    permissions_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
     def get_object(self):
         """Retrieve and return authenticated user"""
         return self.request.user
+
