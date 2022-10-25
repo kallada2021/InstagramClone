@@ -9,6 +9,7 @@ CREATE_USER_URL = reverse("api:create")
 TOKEN_URL = reverse("api:token")
 ME_URL = reverse("api:me")
 
+
 def create_user(**params):
     """Create and return a test user"""
     return get_user_model().objects.create_user(**params)
@@ -92,15 +93,35 @@ class PublicUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-
 class PrivateUserApiTests(TestCase):
     """Test API requests that require authentication"""
+
     def setUp(self):
         self.user = create_user(
             username="Test",
             password="testing123",
             email="admin@example.com",
+            firstname="Tester",
         )
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
+
+    def test_retrieve_profile_success(self):
+        """Test retrieving profile for logged in user."""
+        res = self.client.get(ME_URL)
+
+        # TODO: check status code and res.data includes user info
+
+    def test_update_user_profile_firstname(self):
+        """Test updating the user profile for logged in users"""
+        payload = {"firstname": "Updated Name", "password": "pw123456"}
+
+        res = self.client.patch(ME_URL, payload)
+
+        self.user.refresh_from_db()
+        # TODO: check if firstname and password is updated using payload
+
+    # TODO: write a test to check if user can update email
+
+    # TODO: Write a test to check POST to me endpoint returns Method Not Allowed

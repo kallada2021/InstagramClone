@@ -26,11 +26,10 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.user.username)
         self.assertContains(res, self.user.email)
 
-    # TODO: finish test
     def test_edit_user_page(self):
         """Test edit user page"""
         url = reverse("admin:api_user_change", args=[self.user.id])
         res = self.client.get(url)
-    
+
         self.assertEqual(res.status_code, 200)
         self.assertContains(res, self.user.username)

@@ -25,6 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
         return user
 
+
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for Auth Token"""
 
@@ -48,20 +49,3 @@ class AuthTokenSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code="authentication")
         attrs["user"] = user
         return attrs
-
-
-# TODO: remove after fixing update method in User Serializer
-class ChangePasswordSerializer(serializers.Serializer):
-    model = get_user_model()
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-
-    def validate(self, attrs):
-        if not self.context["request"].user.check_password(attrs["old_password"]):
-            raise serializers.ValidationError({"old_password": "Wrong password."})
-        return attrs
-
-    def save(self, **kwargs):
-        user = self.context["request"].user
-        user.set_password(self.validated_data["new_password"])
-        user.save()

@@ -12,7 +12,16 @@ class UserAdmin(BaseUserAdmin):
     ordering = ["id"]
     list_display: tuple = ["email", "username"]
     fieldsets = (
-        (None, {"fields": ("username","email", "password",)}),
+        (
+            None,
+            {
+                "fields": (
+                    "username",
+                    "email",
+                    "password",
+                )
+            },
+        ),
         (
             _("Permissions"),
             {

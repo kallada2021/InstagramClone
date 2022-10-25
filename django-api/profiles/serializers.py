@@ -19,3 +19,4 @@ class ProfileSerializer(serializers.ModelSerializer):
             "age",
             "gender",
         ]
+        read_only_fields = ["id"]

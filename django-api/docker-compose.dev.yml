@@ -3,41 +3,52 @@ version: "3.9"
 services:
   api:
     build:
-      context: . 
+      context: .
       dockerfile: Dockerfile
-    command: /Start 
+    # command: /Start
+      args:
+       - DEV=true
     container_name: api
-    volumes: 
-      - .:/app 
-      - static-volume:/app/staticfiles 
+    volumes:
+      - .:/app
+      - static-volume:/app/staticfiles
       - media-volume:/app/mediafiles
-    expose: 
+    expose:
       - "8000"
-    env_file:
-      - ./.env
-    depends_on: 
-      - postgres 
-    networks: 
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=devdb
+      - DB_USER=postgres
+      - DB_PASS=changeme
+    # env_file:
+      # - ./.env
+    depends_on:
+      - postgres
+    networks:
       - instagram-clone
-  
-  postgres: 
+
+  postgres:
     image: postgres:13.4-alpine
     ports:
       - "5432:5432"
     restart: always
     environment:
       POSTGRES_USERNAME: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: instagramclone
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: devdb
     networks:
       - instagram-clone
     volumes:
       - dev-db-data:/var/lib/postgresql/data
 
-  nginx: 
-    restart: always 
+  nginx:
+    restart: always
     depends_on:
-      - api 
+      - api
     volumes:
       - static-volume:/app/staticfiles
       - media-volume:/app/mediafiles
@@ -48,14 +59,14 @@ services:
       - "8080:80"
     networks:
       - instagram-clone
-    
 
 
-networks: 
+
+networks:
   instagram-clone:
-    driver: bridge 
+    driver: bridge
 
 volumes:
-  static-volume: 
-  media-volume: 
+  static-volume:
+  media-volume:
   dev-db-data:

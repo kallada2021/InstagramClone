@@ -1,5 +1,6 @@
-from django.urls import path # noqa
+from django.urls import path  # noqa
 
-from . import views # noqa
+from .views import ProfilesViewSet  # noqa
 
+# TODO: add endpoint for profiles
 urlpatterns = []
