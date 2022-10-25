@@ -107,11 +107,11 @@ class PrivateUserApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_retrieve_profile_success(self):
-        """Test retrieving profile for logged in user."""
+    def test_retrieve_userinfo_success(self):
+        """Test retrieving userinfo for logged in user."""
         res = self.client.get(ME_URL)
-
-        # TODO: check status code and res.data includes user info
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEquals(res.data, {"username": "Test", "email": "admin@example.com", "firstname": "Tester", "lastname": ""})
 
     def test_update_user_profile_firstname(self):
         """Test updating the user profile for logged in users"""
@@ -120,8 +120,20 @@ class PrivateUserApiTests(TestCase):
         res = self.client.patch(ME_URL, payload)
 
         self.user.refresh_from_db()
-        # TODO: check if firstname and password is updated using payload
+        self.assertEqual(self.user.firstname, payload["firstname"])
+        self.assertTrue(self.user.check_password(payload["password"]))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-    # TODO: write a test to check if user can update email
+    def test_update_user_profile_email(self):
+        """Test updating the user profile for logged in users"""
+        payload = {"email": "any@example.com"}
+        res = self.client.patch(ME_URL, payload)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email,payload["email"])
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-    # TODO: Write a test to check POST to me endpoint returns Method Not Allowed
+    # checking to see if the user is creating a second account with the same email and username
+    def test_post_userdata_not_allowed(self):
+        """Test that POST is not allowed on the me url"""
+        res = self.client.post(ME_URL, {})
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
