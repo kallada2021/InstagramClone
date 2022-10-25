@@ -7,13 +7,17 @@ from rest_framework.test import APIClient
 
 from .models import Profile
 
-PROFILES_URL = reverse("profiles:createprofile")  # Add Profile URL
+PROFILES_URL = reverse("profile:profile-list")  # Add Profile URL
+
+
+def detail_url(profile_id):
+    """Create and return a detailed profile by ID URL"""
+    return reverse("profile:profile-detail", args=[profile_id])
 
 
 def create_profile(**params):
     """Create sample test profile"""
     defaults = {
-        # TODO: add all fields
         "firstname": "Test",
         "lastname": "User",
         "username": "testuser",
@@ -25,7 +29,7 @@ def create_profile(**params):
         "profile_image": "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
         "active": True,
         "age": 21,
-        "gender":"Male",
+        "gender": "Male",
     }
 
     defaults.update(params)
@@ -33,29 +37,20 @@ def create_profile(**params):
     return profile
 
 
-class ProfileApiTests(TestCase):
-    """Profile API tests"""
+class PublicProfileApiTests(TestCase):
+    """Profile API public endpoints tests"""
+
+    def test_create_new_profile(self):
+        """Tests creating a new profile based on model"""
+        profile = create_profile()
+        self.assertEqual(str(profile), f"{profile.firstname} {profile.lastname}")
 
     def setUp(self):
         self.client = APIClient()
 
-    def test_create_profile(self):
-        """Tests creating a profile"""
-        payload: dict = {"username": "Test", "email": "test@example.com", "password": "Testp12"}
-        profile = create_profile(payload)
-        res = self.client.post(PROFILES_URL, payload)
-        self.assertEqual(profile.username, payload["username"])
-        self.assertEqual(profile.email, payload["email"])
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-
-        # TODO: check fields exist self.assertEqual(str(profile), )
-       
-        
-
     def test_auth_required(self):
-        """Test auth is required to get profiles"""
-        # TODO: get profile url and assert unauthorized status code
-        pass
+        """Test auth is required to call get profile endpoint"""
+        # TODO: test getting a profile requires auth
 
 
 class PrivateProfilesAPITests(TestCase):
@@ -68,6 +63,26 @@ class PrivateProfilesAPITests(TestCase):
         )
         self.client.force_authenticate(self.user)
 
+    def test_create_user_profile(self):
+        """Tests creating a profile post method"""
+        payload: dict = {
+            "username": "Test",
+            "email": "test@example.com",
+            "password": "Testp12",
+            "location": "earth",
+        }
+
+        res = self.client.post(PROFILES_URL, payload)
+        profile = Profile.objects.get(id=res.data["id"])
+
+        self.assertEqual(profile.username, payload["username"])
+        self.assertEqual(profile.email, payload["email"])
+        # Loops through all the payload values and compares to the db object
+        for k, v in payload.items():
+            self.assertEqual(getattr(profile, k), v)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
     def test_get_profiles(self):
         """Test getting a list of user profiles"""
         create_profile({})  # TODO pass in example paramas
@@ -76,4 +91,27 @@ class PrivateProfilesAPITests(TestCase):
         res = self.client.get(PROFILES_URL)
 
         recipes = Profile.objects.all().order_by("-created_at")
-        # TODO serialize profiles (More than ONE!)
+        # TODO serializer profiles (More than ONE!)
+        # TODO assert 201 status and res data = serializer data
+
+    def test_get_profile_detail_by_id(self):
+        """Tests getting a profle by id"""
+        profile = create_profile({})  # TODO pass in data
+        url = detail_url()  # TODO pass profile id
+
+        # TODO:  get URL response
+        # Add and import DetailSerializer and assert serializer data == response data
+
+    def test_partial_update(self):
+        """Test partial update of a profile."""
+        original_location = ("earth",)
+        profile = create_profile(firstname="Testy", location=original_location)
+
+        payload = {"firstname": "Tester"}
+        url = detail_url(profile.id)
+
+        # TODO: call patch url with payload
+
+        # TODO: assert status OK
+        profile.refresh_from_db()
+        # assert firstname changed and location did not change

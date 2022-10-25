@@ -111,16 +111,27 @@ class PrivateUserApiTests(TestCase):
         """Test retrieving userinfo for logged in user."""
         res = self.client.get(ME_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEquals(res.data, {"username": "Test", "email": "admin@example.com", "firstname": "Tester", "lastname": ""})
+        self.assertEquals(
+            res.data, {"username": "Test", "email": "admin@example.com", "firstname": "Tester", "lastname": ""}
+        )
 
     def test_update_user_profile_firstname(self):
-        """Test updating the user profile for logged in users"""
-        payload = {"firstname": "Updated Name", "password": "pw123456"}
+        """Test updating the user's name for logged in users"""
+        payload = {"firstname": "Updated Name"}
 
         res = self.client.patch(ME_URL, payload)
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.firstname, payload["firstname"])
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_update_user_profile_password(self):
+        """Test updating the user password for logged in users"""
+        payload = {"password": "pw123456"}
+
+        res = self.client.patch(ME_URL, payload)
+
+        self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(payload["password"]))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
@@ -129,7 +140,7 @@ class PrivateUserApiTests(TestCase):
         payload = {"email": "any@example.com"}
         res = self.client.patch(ME_URL, payload)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.email,payload["email"])
+        self.assertEqual(self.user.email, payload["email"])
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     # checking to see if the user is creating a second account with the same email and username

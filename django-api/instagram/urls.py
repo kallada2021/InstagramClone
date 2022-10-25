@@ -22,6 +22,7 @@ urlpatterns = [
     path("api/", include("api.urls")),
     path("schema/", SpectacularAPIView.as_view(), name="apischema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="apischema"), name="apidocs"),
-    path("messaging/", include("messaging.urls")),
+    path("api/messaging/", include("messaging.urls")),
+    path("api/profile/", include("profiles.urls"))
     # TODO: make path for profile endpoints
 ]

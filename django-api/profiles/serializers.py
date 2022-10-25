@@ -12,11 +12,19 @@ class ProfileSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "location",
-            "aboutme",
-            "status",
             "profile_image",
-            "active",
-            "age",
-            "gender",
         ]
         read_only_fields = ["id"]
+
+
+class ProfileDetailSerializer(ProfileSerializer):
+    """Serializer to return a detailed profile"""
+
+    class Meta(ProfileSerializer.Meta):
+        fields = ProfileSerializer.Meta.fields + [
+            "active",
+            "age",
+            "aboutme",
+            "gender",
+            "status",
+        ]

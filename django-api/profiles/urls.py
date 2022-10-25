@@ -1,7 +1,13 @@
-from django.urls import path  # noqa
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from .views import ProfilesViewSet  # noqa
+from .views import ProfilesViewSet
 
-app_name = "profiles"  
-# TODO: add endpoint for profiles
-urlpatterns = [path("profile/create", ProfilesViewSet.as_view(),name = "createprofile")]
+app_name = "profile"
+
+router = DefaultRouter()
+router.register("profiles", ProfilesViewSet)
+
+urlpatterns = [
+    path("", include(router.urls)),
+]
