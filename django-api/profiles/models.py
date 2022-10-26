@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -8,14 +9,19 @@ class Profile(models.Model):
         ("Male", "Male"),
         ("Female", "Female"),
     ]
-
-    firstname = models.CharField(max_length=255)
-    lastname = models.CharField(max_length=255)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    firstname = models.CharField(max_length=255, blank=True)
+    lastname = models.CharField(max_length=255, blank=True)
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=255, blank=True)
     location = models.CharField(max_length=255, blank=True)
-    aboutme = models.TextField()
+    aboutme = models.TextField(blank=True)
     status = models.CharField(max_length=255, default="unavailable")
     profile_image = models.CharField(
         max_length=255, default="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
