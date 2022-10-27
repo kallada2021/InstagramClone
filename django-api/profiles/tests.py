@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 
 from .models import Profile
 
-PROFILES_URL = reverse("profile:profile-list")  # Add Profile URL
+PROFILES_URL = reverse("profile:profile-list")
 
 
 def detail_url(profile_id):
@@ -50,7 +50,8 @@ class PublicProfileApiTests(TestCase):
 
     def test_auth_required(self):
         """Test auth is required to call get profile endpoint"""
-        # TODO: test getting a profile requires auth
+        res = self.client.get(PROFILES_URL)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateProfilesAPITests(TestCase):
@@ -59,7 +60,9 @@ class PrivateProfilesAPITests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            # TODO add fields to create a test user
+            username = "testuser",
+            email = "admin@example.com",
+            password = "testpass123",
         )
         self.client.force_authenticate(self.user)
 
@@ -85,8 +88,16 @@ class PrivateProfilesAPITests(TestCase):
 
     def test_get_profiles(self):
         """Test getting a list of user profiles"""
-        create_profile({})  # TODO pass in example paramas
-        create_profile({})  # TODO pass in a second example params
+        create_profile({
+            "username": "testuser1",
+            "email": "test@example.com",
+            "location": "earth",
+        })  
+        create_profile({
+            "username": "testuser2",
+            "email": "test1@example.com",
+            "location": "mars",
+        })
 
         res = self.client.get(PROFILES_URL)
 
