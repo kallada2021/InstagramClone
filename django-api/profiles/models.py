@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 
 
+# TODO: Make phone number unique
 class Profile(models.Model):
     """User Profile model"""
 

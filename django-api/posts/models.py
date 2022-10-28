@@ -39,4 +39,4 @@ class Comment(models.Model):
         ordering = ["created_at"]
 
     def __str__(self):
-        return self.body
+        return self.body[50]

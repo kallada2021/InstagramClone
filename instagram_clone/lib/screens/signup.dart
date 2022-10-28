@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/constants/utils.dart';
 import 'package:instagram_clone/widgets/auth_button.dart';
 import 'package:instagram_clone/widgets/customappbar.dart';
 import 'package:instagram_clone/widgets/textfield.dart';
@@ -56,6 +57,16 @@ class _SignupScreenState extends State<SignupScreen> {
                   print("Signup");
                 },
                 buttonText: "Signup",
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  "Already have an account?",
+                  style: Utils.kMediumFontTextStyle,
+                ),
               ),
             ],
           ),

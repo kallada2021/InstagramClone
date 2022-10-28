@@ -26,8 +26,8 @@ class Utils {
   static TextStyle kAppBarTextStyle =
       const TextStyle(color: Colors.white, fontSize: 16);
 
-  static TextStyle kTechNameStyle = TextStyle(
-    fontSize: 40,
+  static TextStyle kMediumFontTextStyle = TextStyle(
+    fontSize: 35,
     fontWeight: FontWeight.w900,
     color: Colors.deepPurple[900],
     fontFamily: "Arial",

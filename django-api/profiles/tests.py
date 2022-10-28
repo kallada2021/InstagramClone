@@ -20,8 +20,8 @@ def create_profile(**params):
     defaults = {
         "firstname": "Test",
         "lastname": "User",
-        "username": "testuser",
-        "email": "test@example.com",
+        "username": "testinguser",
+        "email": "tester@example.com",
         "phone": "1234567890",
         "location": "Test Location",
         "aboutme": "Test About Me",
@@ -60,23 +60,24 @@ class PrivateProfilesAPITests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            username = "testuser",
-            email = "admin@example.com",
-            password = "testpass123",
+            username="testuser",
+            email="admin@example.com",
+            password="testpass123",
         )
         self.client.force_authenticate(self.user)
 
     def test_create_user_profile(self):
         """Tests creating a profile post method"""
         payload: dict = {
-            "username": "Test",
-            "email": "test@example.com",
-            "password": "Testp12",
+            "username": "Testing123",
+            "email": "testuser@example.com",
             "location": "earth",
+            "gender": "Male",
         }
 
         res = self.client.post(PROFILES_URL, payload)
-        profile = Profile.objects.get(id=res.data["id"])
+        print(f"profile res {res.data}")
+        profile = Profile.objects.get(username=payload["username"])
 
         self.assertEqual(profile.username, payload["username"])
         self.assertEqual(profile.email, payload["email"])
@@ -88,16 +89,23 @@ class PrivateProfilesAPITests(TestCase):
 
     def test_get_profiles(self):
         """Test getting a list of user profiles"""
-        create_profile({
-            "username": "testuser1",
-            "email": "test@example.com",
-            "location": "earth",
-        })  
-        create_profile({
-            "username": "testuser2",
-            "email": "test1@example.com",
-            "location": "mars",
-        })
+        create_profile(
+            {
+                "username": "testuser1",
+                "email": "test12345@example.com",
+                "location": "earth",
+                "gender": "Male",
+            }
+        )
+
+        create_profile(
+            {
+                "username": "testuser2",
+                "email": "test12346@example.com",
+                "location": "mars",
+                "gender": "Female",
+            }
+        )
 
         res = self.client.get(PROFILES_URL)
 
@@ -115,8 +123,11 @@ class PrivateProfilesAPITests(TestCase):
 
     def test_partial_update(self):
         """Test partial update of a profile."""
-        original_location = ("earth",)
-        profile = create_profile(firstname="Testy", location=original_location)
+        original_location = "earth"
+        profile = create_profile(
+            firstname="Testy",
+            location=original_location,
+        )
 
         payload = {"firstname": "Tester"}
         url = detail_url(profile.id)
@@ -126,3 +137,14 @@ class PrivateProfilesAPITests(TestCase):
         # TODO: assert status OK
         profile.refresh_from_db()
         # assert firstname changed and location did not change
+
+    def test_delete_profile(self):
+        """Test deleting a profile"""
+        # TODO: create profile
+
+        url = detail_url()
+        res = self.client.delete(url)
+
+        # TODO assert status code and check that profile does not exist
+
+    # TODO: write a test to check a user can not delete another user's profile
