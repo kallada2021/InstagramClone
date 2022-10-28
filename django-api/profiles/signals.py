@@ -29,16 +29,16 @@ def createProfile(sender, instance, created: bool, **kwargs):
         )
 
 
-def updateUser(sender, instance, created: bool, **kwargs):
-    profile = instance
-    user = profile.user
+# def updateUser(sender, instance, created: bool, **kwargs):
+#     profile = instance
+#     user = profile.user
 
-    if created == False:
-        user.firstname = profile.firstname
-        user.lastname = profile.lastname
-        user.username = profile.username
-        user.email = profile.email
-        user.save()
+#     if created == False:
+#         user.firstname = profile.firstname
+#         user.lastname = profile.lastname
+#         user.username = profile.username
+#         user.email = profile.email
+#         user.save()
 
 
 def deleteUser(sender, instance, **kwargs):
@@ -51,5 +51,5 @@ def deleteUser(sender, instance, **kwargs):
 
 
 post_save.connect(createProfile, sender=settings.AUTH_USER_MODEL)
-post_save.connect(updateUser, sender=Profile)
+# post_save.connect(updateUser, sender=Profile)
 post_delete.connect(deleteUser, sender=Profile)

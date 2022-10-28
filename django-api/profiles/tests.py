@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
+from .serializers import ProfileSerializer, ProfileDetailSerializer
 
 from .models import Profile
 
@@ -90,36 +91,40 @@ class PrivateProfilesAPITests(TestCase):
     def test_get_profiles(self):
         """Test getting a list of user profiles"""
         create_profile(
-            {
-                "username": "testuser1",
-                "email": "test12345@example.com",
-                "location": "earth",
-                "gender": "Male",
-            }
+            username="testuser1",
+            email="test12345@example.com",
+            location="earth",
+            gender="Male",
         )
 
         create_profile(
-            {
-                "username": "testuser2",
-                "email": "test12346@example.com",
-                "location": "mars",
-                "gender": "Female",
-            }
+            username="testuser2",
+            email="test12346@example.com",
+            location="mars",
+            gender="Female",
         )
 
         res = self.client.get(PROFILES_URL)
 
-        recipes = Profile.objects.all().order_by("-created_at")
-        # TODO serializer profiles (More than ONE!)
-        # TODO assert 201 status and res data = serializer data
+        profiles = Profile.objects.all().order_by("-created_at")
+        serializer = ProfileSerializer(profiles, many=True)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
 
     def test_get_profile_detail_by_id(self):
         """Tests getting a profle by id"""
-        profile = create_profile({})  # TODO pass in data
-        url = detail_url()  # TODO pass profile id
+        profile = create_profile(
+            username="testuser1",
+            email="test123@example.com",
+            location="earth",
+            gender="Male",
+        )
+        url = detail_url(profile.id)
 
-        # TODO:  get URL response
-        # Add and import DetailSerializer and assert serializer data == response data
+        res = self.client.get(url)
+        serializer = ProfileDetailSerializer(profile)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
 
     def test_partial_update(self):
         """Test partial update of a profile."""
@@ -132,19 +137,24 @@ class PrivateProfilesAPITests(TestCase):
         payload = {"firstname": "Tester"}
         url = detail_url(profile.id)
 
-        # TODO: call patch url with payload
-
-        # TODO: assert status OK
+        res = self.client.patch(url, payload)
         profile.refresh_from_db()
-        # assert firstname changed and location did not change
+        self.assertEqual(profile.firstname, payload["firstname"])
+        self.assertEqual(profile.location, original_location)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_delete_profile(self):
         """Test deleting a profile"""
-        # TODO: create profile
-
-        url = detail_url()
+        profile = create_profile(username="testuser1", email="test123@example.com")
+        url = detail_url(profile.id)
         res = self.client.delete(url)
-
-        # TODO assert status code and check that profile does not exist
-
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        
     # TODO: write a test to check a user can not delete another user's profile
+    def test_delete_profile_not_allowed(self):
+        """Test deleting a profile"""
+        profile = create_profile(username="testuser1", email="test12345@example.com")
+        url = detail_url(profile.id)
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        

@@ -11,7 +11,9 @@ class ProfilesViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProfileDetailSerializer
     queryset = Profile.objects.all()
-    # TODO: Add permissions and authentication class
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
 
     def get_serializer_class(self):
         if self.action == "list":
