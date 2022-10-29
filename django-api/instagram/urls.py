@@ -23,6 +23,6 @@ urlpatterns = [
     path("schema/", SpectacularAPIView.as_view(), name="apischema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="apischema"), name="apidocs"),
     path("api/messaging/", include("messaging.urls")),
-    path("api/profile/", include("profiles.urls"))
-    # TODO: make path for profile endpoints
+    path("api/profile/", include("profiles.urls")),
+    path("api/post/", include("posts.urls")),
 ]

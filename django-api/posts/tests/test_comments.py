@@ -1,11 +1,10 @@
-"""Tests for Posts model and API"""
+"""Tests for Comment model and API"""
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse  # noqa
+from posts.models import Comment
 from profiles.models import Profile
 from rest_framework.test import APIClient
-
-from .models import Post
 
 
 def create_user(**params):
@@ -35,29 +34,12 @@ def create_profile(**params):
     return profile
 
 
-def create_post(user, **params):
-    """Create and return sample recipe"""
-    # TODO: fill in defaults
-    defaults = {}
-
-    defaults.update(params)  # overrides default values with params
-
-    # TODO: create and return test post
-
-
-class PublicPostsApiTests(TestCase):
-    """Profile API public endpoints tests"""
+class PublicCommentsApiTests(TestCase):
+    """Comments API public endpoints tests"""
 
     def setUp(self):
         self.client = APIClient()
 
-    def test_create_post(self):
-        """Tests creating a Post based on model"""
-        profile = create_profile()
-        post = Post.objects.create(
-            owner=profile,
-            title="Post Title",
-            body="Post Body",
-        )
-
-        self.assertEqual(str(post), post.title)
+    def test_create_comment(self):
+        """Tests creating a Comment based on model"""
+        # TODO: create test

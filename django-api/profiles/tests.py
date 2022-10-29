@@ -4,9 +4,9 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from .serializers import ProfileSerializer, ProfileDetailSerializer
 
 from .models import Profile
+from .serializers import ProfileDetailSerializer, ProfileSerializer
 
 PROFILES_URL = reverse("profile:profile-list")
 
@@ -132,6 +132,7 @@ class PrivateProfilesAPITests(TestCase):
         profile = create_profile(
             firstname="Testy",
             location=original_location,
+            # user=self.user,
         )
 
         payload = {"firstname": "Tester"}
@@ -149,12 +150,12 @@ class PrivateProfilesAPITests(TestCase):
         url = detail_url(profile.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        
+
     # TODO: write a test to check a user can not delete another user's profile
     def test_delete_profile_not_allowed(self):
         """Test deleting a profile"""
+        # user =
         profile = create_profile(username="testuser1", email="test12345@example.com")
         url = detail_url(profile.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        
