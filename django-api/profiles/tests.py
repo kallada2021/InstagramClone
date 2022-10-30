@@ -150,12 +150,19 @@ class PrivateProfilesAPITests(TestCase):
         url = detail_url(profile.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-
+    
     # TODO: write a test to check a user can not delete another user's profile
     def test_delete_profile_not_allowed(self):
         """Test deleting a profile"""
-        # user =
-        profile = create_profile(username="testuser1", email="test12345@example.com")
+        # user = self.user
+        # self.client.force_authenticate(user)
+        user2 = get_user_model().objects.create_user(
+            username="testuser2",
+            email="test7890@example.com",
+            password="testpass123",
+        )
+        profile = Profile.objects.get(username=user2.username)
+        #profile = create_profile(username="testuser1", email="test12345@example.com")
         url = detail_url(profile.id)
         res = self.client.delete(url)
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)

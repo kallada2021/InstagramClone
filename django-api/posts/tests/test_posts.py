@@ -6,9 +6,11 @@ from posts.models import Post
 from profiles.models import Profile
 from rest_framework import status
 from rest_framework.test import APIClient
+from posts.serializers import PostSerializer
 
-# TODO create URL
-POSTS_URL = reverse("")
+
+POSTS_URL = reverse("posts:post-list")
+
 
 
 def detail_url(post_id):
@@ -27,7 +29,7 @@ def create_profile(**params):
         "firstname": "Test",
         "lastname": "User",
         "username": "testingpostsuser",
-        "email": "poststester@example.com",
+        "email": "poststester123@example.com",
         "phone": "12345678910",
         "location": "Test Location",
         "aboutme": "Test About Me",
@@ -43,14 +45,23 @@ def create_profile(**params):
     return profile
 
 
-def create_post(user, **params):
+def create_post(**params):
     """Create and return sample recipe"""
-    # TODO: fill in defaults
-    defaults = {}
+    user = create_user(email="test012@example.com", password="testpass", username="testuser012")
+    profile = Profile.objects.get(username=user.username)
+
+    defaults = {
+        "title": "Test Post",
+        "body": "Test Body",
+        "likes": 10,
+        "owner": profile,
+    }
 
     defaults.update(params)  # overrides default values with params
 
-    # TODO: create and return test post
+    userpost = Post.objects.create(**defaults)
+    return userpost
+
 
 
 class PublicPostsApiTests(TestCase):
@@ -61,7 +72,8 @@ class PublicPostsApiTests(TestCase):
 
     def test_create_post(self):
         """Tests creating a Post based on model"""
-        profile = create_profile()
+        user = create_user(email="test013@example.com", password="testpass", username="testuser013")
+        profile = Profile.objects.get(username=user.username)
         post = Post.objects.create(
             owner=profile,
             title="Post Title",
@@ -76,8 +88,8 @@ class PrivateTAgsAPITests(TestCase):
 
     def setUp(self) -> None:
         self.client = APIClient()
-        self.user = create_user(username="testingpostsuser", email="poststester@example.com")
-        self.client.force_authenticate(self.user)
+        # self.user = create_user(username="testingpostsuser", email="poststester@example.com")
+        # self.client.force_authenticate(self.user)
 
     def test_get_posts(self):
         """Tests getting a list of posts"""
@@ -87,13 +99,17 @@ class PrivateTAgsAPITests(TestCase):
         self.client.force_authenticate(user)
 
         Post.objects.create(owner=profile, title="post title", body="post body")
-        # TODO: Create another post and use client to get posts and serialize and assert the data
+        create_post(owner=profile, title="title2", body="body1")
+        res = self.client.get(POSTS_URL)
+        serializer = PostSerializer(Post.objects.all(), many=True)
+        self.assertEquals(res.status_code, status.HTTP_200_OK)
+        self.assertEquals(res.data, serializer.data)
 
     def test_post_update(self):
         """Updating Post"""
         user = create_user(username="testingpostsuser2", email="poststester2@example.com")
         profile = Profile.objects.get(username=user.username)
-
+        self.client.force_authenticate(user)
         post = Post.objects.create(owner=profile, title="My Day")
         payload = {"title": "Dessert Time!"}
 
@@ -134,5 +150,5 @@ class PrivateTAgsAPITests(TestCase):
         res = self.client.delete(url)
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        posts = Post.objects.filter(username=user.username)
+        posts = Post.objects.filter(title=post.title)
         self.assertFalse(posts.exists())
