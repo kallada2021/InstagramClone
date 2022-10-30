@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/profile.dart';
 
 class Post extends Equatable {
-  ProfileModel owner;
+  Profile owner;
   String title;
   String body;
   // TODO: add rest of fields

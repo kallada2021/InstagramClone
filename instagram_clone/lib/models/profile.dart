@@ -1,11 +1,10 @@
 import 'package:equatable/equatable.dart';
 
-class ProfileModel extends Equatable {
+class Profile extends Equatable {
   final int id;
   final String firstname;
   final String lastname;
   final String username;
-  final String password;
   final String location;
   final String aboutMe;
   final Gender gender;
@@ -14,12 +13,11 @@ class ProfileModel extends Equatable {
   String? phoneNumber;
   final UserState isActive;
 
-  ProfileModel({
+  Profile({
     required this.id,
     required this.firstname,
     required this.lastname,
     required this.username,
-    required this.password,
     required this.location,
     required this.aboutMe,
     required this.gender,
@@ -34,7 +32,6 @@ class ProfileModel extends Equatable {
         firstname,
         lastname,
         username,
-        password,
         isActive,
       ];
 

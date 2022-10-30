@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/post.dart';
+import 'package:instagram_clone/utils/global_functions.dart';
 
 Future<Post?> createOrUpdatePersonDialog(BuildContext context,
     TextEditingController titleController, TextEditingController bodyController,
@@ -49,7 +50,11 @@ Future<Post?> createOrUpdatePersonDialog(BuildContext context,
                   Navigator.of(context).pop(newPost);
                 } else {
                   Navigator.of(context).pop(
-                    Post(title: title!, body: body!, owner: "Logged in user"),
+                    Post(
+                      title: title!,
+                      body: body!,
+                      owner: getLoggedInUserProfile(),
+                    ),
                   );
                 }
               } else {
