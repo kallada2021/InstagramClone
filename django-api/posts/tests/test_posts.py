@@ -122,3 +122,17 @@ class PrivateTAgsAPITests(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]["title"], post.title)
         self.assertEqual(res.data[0]["id"], post.id)
+
+    def test_delete_post(self):
+        """Test deleting a post."""
+        user = create_user(username="testdeletepostsuser2", email="postdeletetester2@example.com")
+        profile = Profile.objects.get(username=user.username)
+        self.client.force_authenticate(user)
+        post = Post.objects.create(owner=profile, title="I made Breakfast!", body="Yum Yum!")
+
+        url = detail_url(post.id)
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        posts = Post.objects.filter(username=user.username)
+        self.assertFalse(posts.exists())

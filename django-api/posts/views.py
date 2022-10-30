@@ -6,7 +6,12 @@ from .models import Post
 from .serializers import CommentSerializer, PostSerializer  # noqa
 
 
-class PostViewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class PostViewSet(
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
     """Maps Post Model to CRUD endpoints"""
 
     serializer_class = PostSerializer
@@ -19,4 +24,4 @@ class PostViewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.Gener
         return self.queryset.filter(user=self.request.user).order_by("-created_at")
 
 
-# TODO create comments viewset
+# TODO create comments viewset class
