@@ -19,3 +19,7 @@ class ProfilesViewSet(viewsets.ModelViewSet):
             return ProfileSerializer
 
         return self.serializer_class
+
+    # def get_queryset(self):
+    #     """Get profiles for authenticated user"""
+    #     return self.queryset.filter(username=self.request.user.username).order_by("-created_at")

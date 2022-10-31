@@ -1,3 +1,4 @@
+from profiles.models import Profile
 from rest_framework import mixins, viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -20,8 +21,11 @@ class PostViewSet(
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Get recipes for authenticated user"""
-        return self.queryset.filter(user=self.request.user).order_by("-created_at")
+        """filters posts to user who created them"""
+        user = self.request.user
+        profile = Profile.objects.get(username=user.username)
+        posts = self.queryset.filter(owner=profile).order_by("-created_at")
+        return posts
 
 
 # TODO create comments viewset class

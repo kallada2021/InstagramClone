@@ -6,7 +6,7 @@ from .models import Profile
 
 def createProfile(sender, instance, created: bool, **kwargs):
     """createProfile sets a signal to create a profile when a user registers for an account"""
-    print("Profile created")
+
     if created:
         user = instance
 
@@ -17,7 +17,7 @@ def createProfile(sender, instance, created: bool, **kwargs):
             firstname = user.firstname
         if user.lastname:
             lastname = user.lastname
-
+        print(f"Profile {user.username}")
         profile: Profile = Profile.objects.create(
             user=user,
             username=user.username,
@@ -51,7 +51,6 @@ def deleteUser(sender, instance, **kwargs):
         user.delete()
         print("Deleting user...")
     except:  # noqa
-        print("No user")  # noqa
         pass
 
 

@@ -3,14 +3,12 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse  # noqa
 from posts.models import Post
+from posts.serializers import PostSerializer
 from profiles.models import Profile
 from rest_framework import status
 from rest_framework.test import APIClient
-from posts.serializers import PostSerializer
-
 
 POSTS_URL = reverse("posts:post-list")
-
 
 
 def detail_url(post_id):
@@ -45,23 +43,18 @@ def create_profile(**params):
     return profile
 
 
-def create_post(**params):
+def create_post(profile, **params):
     """Create and return sample recipe"""
-    user = create_user(email="test012@example.com", password="testpass", username="testuser012")
-    profile = Profile.objects.get(username=user.username)
-
     defaults = {
         "title": "Test Post",
         "body": "Test Body",
         "likes": 10,
-        "owner": profile,
     }
 
     defaults.update(params)  # overrides default values with params
 
-    userpost = Post.objects.create(**defaults)
+    userpost = Post.objects.create(owner=profile, **defaults)
     return userpost
-
 
 
 class PublicPostsApiTests(TestCase):
@@ -94,14 +87,17 @@ class PrivateTAgsAPITests(TestCase):
     def test_get_posts(self):
         """Tests getting a list of posts"""
         user = create_user(username="testingpostsuser1", email="poststester1@example.com")
-        profile = Profile.objects.get(username=user.username)
-
+        profile = Profile.objects.get(id=user.id)
+        print("Get Posts Profile", profile)
         self.client.force_authenticate(user)
 
         Post.objects.create(owner=profile, title="post title", body="post body")
-        create_post(owner=profile, title="title2", body="body1")
+        create_post(profile, title="title2", body="body1")
+
         res = self.client.get(POSTS_URL)
-        serializer = PostSerializer(Post.objects.all(), many=True)
+        posts = Post.objects.all().order_by("-id")
+        serializer = PostSerializer(posts, many=True)
+
         self.assertEquals(res.status_code, status.HTTP_200_OK)
         self.assertEquals(res.data, serializer.data)
 
@@ -114,11 +110,11 @@ class PrivateTAgsAPITests(TestCase):
         payload = {"title": "Dessert Time!"}
 
         url = detail_url(post.id)
-        res = self.client.patch(url, payload)
+        res = self.client.patch(url, payload, format="json")
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         post.refresh_from_db()
-        self.assertEqual(post.name, payload["title"])
+        self.assertEqual(post.title, payload["title"])
 
     def test_posts_limited_to_user(self):
         """Test list of posts is limited to authenticated user"""
