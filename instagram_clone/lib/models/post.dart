@@ -6,11 +6,13 @@ class Post extends Equatable {
   Profile owner;
   String title;
   String body;
+  int likes;
   // TODO: add rest of fields
   Post({
     required this.owner,
     required this.title,
     required this.body,
+    this.likes = 0,
   });
 
   Post updated([String? title, String? body]) => Post(
@@ -18,6 +20,14 @@ class Post extends Equatable {
         title: title ?? this.title,
         body: body ?? this.body,
       );
+
+  Post addLike(int numLikes) {
+    return Post(body: body, title: title, owner: owner, likes: numLikes + 1);
+  }
+
+  Post decreaseLike(int numLikes) {
+    return Post(body: body, title: title, owner: owner, likes: numLikes - 1);
+  }
 
   @override
   // TODO: implement remaining props
