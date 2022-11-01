@@ -11,6 +11,7 @@ class PostViewSet(
     mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
+    mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):
     """Maps Post Model to CRUD endpoints"""
@@ -26,6 +27,11 @@ class PostViewSet(
         profile = Profile.objects.get(username=user.username)
         posts = self.queryset.filter(owner=profile).order_by("-created_at")
         return posts
+
+    def perform_create(self, serializer):
+        auth_user = self.request.user
+        profile = Profile.objects.get(username=auth_user.username)
+        serializer.save(owner=profile)
 
 
 # TODO create comments viewset class

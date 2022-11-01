@@ -43,3 +43,8 @@ class PublicCommentsApiTests(TestCase):
     def test_create_comment(self):
         """Tests creating a Comment based on model"""
         # TODO: create test
+
+
+# TODO: create tests for private endpoints based on comments model
+class PrivateCommentsApiTests(TestCase):
+    """Comments API private endpoint tests"""

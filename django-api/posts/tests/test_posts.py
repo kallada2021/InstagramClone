@@ -88,7 +88,7 @@ class PrivateTAgsAPITests(TestCase):
         """Tests getting a list of posts"""
         user = create_user(username="testingpostsuser1", email="poststester1@example.com")
         profile = Profile.objects.get(id=user.id)
-        print("Get Posts Profile", profile)
+
         self.client.force_authenticate(user)
 
         Post.objects.create(owner=profile, title="post title", body="post body")
