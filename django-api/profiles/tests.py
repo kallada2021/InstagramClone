@@ -9,7 +9,7 @@ from .models import Profile
 from .serializers import ProfileDetailSerializer, ProfileSerializer
 
 PROFILES_URL = reverse("profile:profile-list")
-
+GET_PROFILES_URL = reverse("profile:get-profiles")
 
 def detail_url(profile_id):
     """Create and return a detailed profile by ID URL"""
@@ -50,7 +50,7 @@ class PublicProfileApiTests(TestCase):
     def test_create_new_profile(self):
         """Tests creating a new profile based on model"""
         profile = create_profile()
-        self.assertEqual(str(profile), f"{profile.firstname} {profile.lastname}")
+        self.assertEqual(str(profile), f"{profile.username}")
 
     def setUp(self):
         self.client = APIClient()
@@ -113,12 +113,13 @@ class PrivateProfilesAPITests(TestCase):
             lastname="Tests",
         )
 
-        res = self.client.get(PROFILES_URL)
+        res = self.client.get(GET_PROFILES_URL)
 
         profiles = Profile.objects.all().order_by("-created_at")
         serializer = ProfileSerializer(profiles, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(profiles.count(), 3)
+        self.assertEqual(len(serializer.data), 3)
         self.assertEqual(res.data, serializer.data)
 
     def test_get_profile_detail_by_id(self):

@@ -23,10 +23,18 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    # TODO: add post field
+    post = PostSerializer(many=False, required=True)
     class Meta:
         model = Comment
-        fields = "__all__"
+        #fields = "__all__"
+        fields = ["id", "post", "owner", "body", "created_at", "updated_at"]
         read_only_fields = ["id"]
 
-    # TODO: add create method for comment
+    # TODO: get post by id
+    def create(self, **validated_data):
+        """Create a Comment"""
+        auth_user = self.context["request"].user
+        profile = Profile.objects.get(username=auth_user.username)
+        post = Post.objects.get(id=validated_data["post"]["id"])    
+        comment = Comment.objects.create(owner=profile,post=post,**validated_data)
+        return comment

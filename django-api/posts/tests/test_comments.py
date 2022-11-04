@@ -5,7 +5,10 @@ from django.urls import reverse  # noqa
 from posts.models import Comment, Post
 from profiles.models import Profile
 from rest_framework.test import APIClient
+from rest_framework import status
+from posts.serializers import CommentSerializer
 
+COMMENTS_URL = reverse("posts:comment-list")
 
 def create_user(**params):
     """Create and return a test user"""
@@ -55,7 +58,6 @@ class PublicCommentsApiTests(TestCase):
 
     def test_create_comment(self):
         """Tests creating a Comment based on model"""
-        # TODO: create test
         profile = create_profile()
         post = Post.objects.create(
             owner=profile,
@@ -74,3 +76,36 @@ class PublicCommentsApiTests(TestCase):
 # TODO: create tests for private endpoints based on comments model
 class PrivateCommentsApiTests(TestCase):
     """Comments API private endpoint tests"""
+    
+    def setUp(self) -> None:
+        self.client = APIClient()
+
+
+    def test_get_comment(self):
+        """Tests creating a Comment based on model"""
+        user = create_user(username="testingcommentsuser", email="commenttester012@example.com", password="testpass123")
+        profile = Profile.objects.get(username=user.username)
+        self.client.force_authenticate(user)
+        post = Post.objects.create(
+                owner=profile,
+                title="Test Post",
+                body="Test Body",
+            )
+        comment = Comment.objects.create(
+                post=post,
+                owner=profile,
+                body="Test Comment",
+            )
+        comment2 = Comment.objects.create(
+                post=post,
+                owner=profile,
+                body="Testing Comment",
+            )
+        res = self.client.get(COMMENTS_URL)
+        serializer = CommentSerializer(res.data, many=True)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        #self.assertEqual(res.data, serializer.data)
+        self.assertEqual(len(res.data), 2)
+        self.assertEqual(comment.body, "Test Comment")
+        self.assertEqual(comment2.body, "Testing Comment")
+        #self.assertEqual(len(serializer.data), 2)

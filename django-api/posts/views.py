@@ -50,13 +50,13 @@ class CommentViewSet(
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        """filters comments to user who created them"""
-        user = self.request.user
-        profile = Profile.objects.get(username=user.username)
-        posts = self.queryset.filter(owner=profile).order_by("-created_at")
-        comments = self.queryset.filter(post=posts).order_by("-created_at")
-        return comments
+    # def get_queryset(self):
+    #     """filters comments to user who created them"""
+    #     user = self.request.user
+    #     profile = Profile.objects.get(username=user.username)
+    #     posts = self.queryset.filter(owner=profile).order_by("-created_at")
+    #     comments = self.queryset.filter(post=posts).order_by("-created_at")
+    #     return comments
 
     # def perform_create(self, serializer):
     #     auth_user = self.request.user
