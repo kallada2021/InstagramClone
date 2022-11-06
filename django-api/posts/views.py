@@ -48,15 +48,16 @@ class CommentsView(generics.GenericAPIView):
             id = self.kwargs.get("id")
             post = Post.objects.get(id=id)
         except:
-            # TODO: Make generic using NotFound
-            return Response({"message": "Post does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+            
 
         # request.data._mutable = True
         comment = request.data
-        print(comment)
-        print("Post ", post)
         user = request.user
-        profile = Profile.objects.get(username=user.username)  # TODO add try and except for profile object
+        try:
+            profile = Profile.objects.get(username=user.username)   
+        except:
+            return Response({"detail": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
         Comment.objects.create(body=comment["body"], owner=profile, post=post)
 
@@ -74,12 +75,12 @@ class CommentsView(generics.GenericAPIView):
             id = self.kwargs.get("id")
             post = Post.objects.get(id=id)
         except:
-            return Response({"message": "Post does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return NotFound(detail="Post does not exist.", code=404)
 
         try:
             comments = Comment.objects.filter(post_id=post.id)
         except:
-            return Response({"message": "No comments found."}, status=status.HTTP_404_NOT_FOUND)
+            return NotFound(detail="No comments found.", code=404)
 
         serializer = CommentSerializer(
             comments,
@@ -100,20 +101,46 @@ class CommentsUpdateDeleteView(generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def put(self, request, commentid):
+    def put(self, request, id, commentid):
         """Updates a comment"""
         try:
             comment = Comment.objects.get(id=commentid)
         except:
-            return Response(
-                {"message": "Comment not found."}, status=status.HTTP_404_NOT_FOUND
-            )  # TODO: Make generic using NotFound
+            return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data
-        # TODO: update comment and return a response
+        comment.body = data["body"]
+        user = request.user
+        try:
+            profile = Profile.objects.get(username=user.username)
+        except:
+            return Response({"detail": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
-    def delete():  # TODO: add parameters
+        if comment.owner != profile:
+            return Response({"message": "You are not authorized to delete this comment"}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            comment.save()
+            return Response( {"message": "Comment updated", "body": data["body"]}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Error updating comment"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id, commentid):
         """Deletes a comment"""
+        try:
+            comment = Comment.objects.get(id=commentid)
+        except:
+            return NotFound(detail="Comment does not exist.", code=404)
+
+        user = request.user
+        try:
+            profile = Profile.objects.get(username=user.username)
+        except:
+            return Response({"detail": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+        if comment.owner != profile:
+            return Response({"message": "You are not authorized to delete this comment"}, status=status.HTTP_401_UNAUTHORIZED)
+        comment.delete()
+        return Response({"message": "Comment deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 
 # class CommentViewSet(

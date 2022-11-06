@@ -16,6 +16,11 @@ def detail_url(post_id):
     """Create and return comments for a post"""
     return reverse("posts:comments", args=[post_id])
 
+def delete_update_comment_url(post_id, comment_id):
+    """Create and return comments for a post"""
+    return reverse("posts:comment", args=[post_id, comment_id])
+
+
 
 def create_user(**params):
     """Create and return a test user"""
@@ -142,6 +147,83 @@ class PrivateCommentsApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertIn(res.data["body"], "Nice post!")
 
-    # TODO: test creating a comment on a non existant post, returns 404
+    def test_post_create_comment_on_non_existant_post(self):
+        """Tests creating a comment on a non existant post"""
+        user = create_user(
+            username="testingcreatecommentsuser", email="commenttester@example.com", password="testpass123",)
+        self.client.force_authenticate(user)
+        payload: dict = {
+            "body": "No post!",
+        }
 
-    # TODO: create patch and delete comment test
+        url = detail_url(100)
+        res = self.client.post(url, payload, format="json")
+        print("Post comment res ", res.json)
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_delete_comment(self):
+        """Tests deleting a comment"""
+        user = create_user(
+            username="testingdeletecommentsuser", email="commenttester@example.com", password="testpass123",)
+        profile = Profile.objects.get(username=user.username)
+        self.client.force_authenticate(user)
+        post = Post.objects.create(owner = profile, title = "Test Post", body = "Test Body")
+        comment = Comment.objects.create(post = post, owner = profile, body = "Test Comment")
+        url = delete_update_comment_url(post.id, comment.id)
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Comment.objects.filter(id = comment.id).exists())
+
+
+    def test_delete_comment_on_another_users_post(self):
+        """Tests deleting a comment on another users post"""
+        user1 = create_user(
+            username="testingdeletecommentsuser1", email="commenttester1@example.com", password="testpass123",)
+        profile1 = Profile.objects.get(username=user1.username)
+        self.client.force_authenticate(user1)
+        user2 = create_user(
+            username="testingdeletecommentsuser2", email="commenttester2@example.com", password="testpass123",)
+        profile2 = Profile.objects.get(username=user2.username)
+
+        post = Post.objects.create(owner = profile2, title = "Test Post", body = "Test Body")
+        comment = Comment.objects.create(post = post, owner = profile2, body = "Test Comment")
+        url = delete_update_comment_url(post.id, comment.id)
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertTrue(Comment.objects.filter(id = comment.id).exists())
+
+    def test_update_comment(self):
+        """Tests updating a comment"""
+        user = create_user(
+            username="testingupdatecommentsuser", email="testcommenter@example.com", password="testpass123",)
+        profile = Profile.objects.get(username=user.username)
+        self.client.force_authenticate(user)
+        post = Post.objects.create(owner = profile, title = "Test Post", body = "Test Body")
+        comment = Comment.objects.create(post = post, owner = profile, body = "Test Comment")
+        payload = {
+            "body": "Updated comment"
+        }
+        url = delete_update_comment_url(post.id, comment.id)
+        res = self.client.put(url, payload, format="json")
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data["body"], "Updated comment")
+
+    def test_update_comment_on_another_users_post(self):
+        """Tests updating a comment on another users post"""
+        user1 = create_user(
+            username="testingupdatecommentsuser1", email="testcommenter1@example.com", password="testpass123",)
+        profile1 = Profile.objects.get(username=user1.username)
+        self.client.force_authenticate(user1)
+        user2 = create_user(
+            username="testingupdatecommentsuser2", email="testcommenter2@example.com", password="testpass123",)
+        profile2 = Profile.objects.get(username=user2.username)
+        post = Post.objects.create(owner = profile2, title = "Test Post", body = "Test Body")
+        comment = Comment.objects.create(post = post, owner = profile2, body = "Test Comment")
+        payload = {
+            "body": "Updated comment"
+        }
+        url = delete_update_comment_url(post.id, comment.id)
+        res = self.client.put(url, payload, format="json")
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertTrue(Comment.objects.filter(id = comment.id).exists())
