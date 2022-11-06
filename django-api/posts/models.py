@@ -27,8 +27,8 @@ class Post(models.Model):
 class Comment(models.Model):
     """Comment model"""
 
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="post")
-    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="author")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments", blank=True)
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="comments", blank=True)
     body = models.TextField()
     likes = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -39,4 +39,5 @@ class Comment(models.Model):
         ordering = ["created_at"]
 
     def __str__(self):
-        return str(self.likes)
+        # return str(self.likes)
+        return f"Comment by {self.owner.username} created at {self.created_at}"

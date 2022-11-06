@@ -1,7 +1,7 @@
 """Tests for Posts model and API"""
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.urls import reverse  # noqa
+from django.urls import reverse
 from posts.models import Post
 from posts.serializers import PostSerializer
 from profiles.models import Profile

@@ -11,6 +11,7 @@ from .serializers import ProfileDetailSerializer, ProfileSerializer
 PROFILES_URL = reverse("profile:profile-list")
 GET_PROFILES_URL = reverse("profile:get-profiles")
 
+
 def detail_url(profile_id):
     """Create and return a detailed profile by ID URL"""
     return reverse("profile:profile-detail", args=[profile_id])

@@ -10,5 +10,5 @@ router.register("profiles", ProfilesViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("all-profiles/", get_all_profiles, name="get-profiles"),   
+    path("all-profiles/", get_all_profiles, name="get-profiles"),
 ]

@@ -1,4 +1,5 @@
 """Tests for Django Admin """
+import email
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -10,7 +11,9 @@ class AdminSiteTests(TestCase):
     def setUp(self):
         """Create User and Client"""
         self.client = Client()
-        self.admin_user = get_user_model().objects.create_superuser(username="user1", password="testpass123")
+        self.admin_user = get_user_model().objects.create_superuser(
+            username="user1", email="test@test.com", password="testpass123"
+        )
 
         self.client.force_login(self.admin_user)
 

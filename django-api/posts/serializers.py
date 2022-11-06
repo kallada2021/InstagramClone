@@ -11,7 +11,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ["id", "owner", "title", "body", "created_at", "updated_at"]
-        read_only_fields = ["id"]
+        # read_only_fields = ["id"]
 
     def create(self, **validated_data):
         """Create a Post"""
@@ -23,18 +23,16 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    post = PostSerializer(many=False, required=True)
+    post = serializers.ReadOnlyField(source="posts.post.title")
+    owner = serializers.ReadOnlyField(source="profiles.profile.username")
+
     class Meta:
         model = Comment
-        #fields = "__all__"
-        fields = ["id", "post", "owner", "body", "created_at", "updated_at"]
-        read_only_fields = ["id"]
+        fields = ["id", "owner", "post", "body", "created_at", "updated_at"]
+        # read_only_fields = ["id", "owner", "post"]
 
-    # TODO: get post by id
-    def create(self, **validated_data):
-        """Create a Comment"""
-        auth_user = self.context["request"].user
-        profile = Profile.objects.get(username=auth_user.username)
-        post = Post.objects.get(id=validated_data["post"]["id"])    
-        comment = Comment.objects.create(owner=profile,post=post,**validated_data)
-        return comment
+
+class UpdateDeleteCommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["id", "owner", "post", "body", "created_at", "updated_at"]

@@ -13,6 +13,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "email",
             "location",
             "profile_image",
+            "id",
         ]
         read_only_fields = ["id"]
 
