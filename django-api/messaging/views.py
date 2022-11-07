@@ -1,12 +1,11 @@
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import viewsets, mixins, generics, status
+from profiles.models import Profile
+from rest_framework import generics, mixins, status, viewsets  # noqa
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .serializers import MessageSerializer
-from .models import Message
-from profiles.models import Profile
+from rest_framework.response import Response  # noqa
 
+from .models import Message
+from .serializers import MessageSerializer
 
 # Create your views here.
 # class MessageView(APIView):
@@ -33,10 +32,12 @@ class MessageViewSet(
         """filters messages to user who created them"""
         user = self.request.user
         profile = Profile.objects.get(username=user.username)
-        messages = self.queryset.filter(sender=profile).order_by("-created_at")
+        messages = self.queryset.filter(sender=profile).order_by("-time")
         return messages
 
     def perform_create(self, serializer):
         auth_user = self.request.user
         profile = Profile.objects.get(username=auth_user.username)
+        print("MessageSerializer",serializer.validated_data)
         serializer.save(sender=profile)
+

@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from posts.models import Comment, Post
-from posts.serializers import CommentSerializer, PostSerializer
+from posts.serializers import CommentSerializer
 from profiles.models import Profile
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -186,7 +186,6 @@ class PrivateCommentsApiTests(TestCase):
             email="commenttester1@example.com",
             password="testpass123",
         )
-        profile1 = Profile.objects.get(username=user1.username)
         self.client.force_authenticate(user1)
         user2 = create_user(
             username="testingdeletecommentsuser2",
@@ -226,7 +225,6 @@ class PrivateCommentsApiTests(TestCase):
             email="testcommenter1@example.com",
             password="testpass123",
         )
-        profile1 = Profile.objects.get(username=user1.username)
         self.client.force_authenticate(user1)
         user2 = create_user(
             username="testingupdatecommentsuser2",

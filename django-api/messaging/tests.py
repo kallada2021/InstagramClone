@@ -1,12 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from profiles.models import Profile
+from profiles.models import Profile # noqa
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from messaging.models import Message
-from messaging.serializers import MessageSerializer
+from messaging.serializers import MessageSerializer # noqa
 
 MESSAGES_URL = reverse("messaging:message-list")
 
@@ -44,3 +44,52 @@ class PublicMessagesApiTests(TestCase):
         res = self.client.get(MESSAGES_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_message(self):
+        """Test creating a new message"""
+        user1 = create_user(email="messagingtester1@example.com", password="testpass",username="messagingtester1")
+        profile1 = Profile.objects.get(username=user1.username)
+        user2 = create_user(email="messagingtester2@example.com", password="testpass",username="messagingtester2")
+        profile2 = Profile.objects.get(username=user2.username)
+        message = create_message(sender=profile1, receiver=profile2, message_body="Test Message")
+        self.assertEqual(message.message_body, "Test Message")
+        
+
+class PrivateMessagesApiTests(TestCase):
+    """Message API private endpoints tests"""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = create_user(
+            email="messagingtester123@example.com",
+            password="testpass123",
+            username="messagingtester123",
+        )
+    def test_retrieve_messages(self):
+        """Test retrieving messages"""
+        user1 = create_user(email="mesagingtester1@example.com", password="testpass",username="messagingtester1")
+        profile1 = Profile.objects.get(username=user1.username)
+        self.client.force_authenticate(user1)
+        user2 = create_user(email="messagingtester2@example.com", password="testpass",username="messagingtester2")
+        profile2 = Profile.objects.get(username=user2.username)
+        message = create_message(sender=profile1, receiver=profile2, message_body="Test Message")
+        res = self.client.get(MESSAGES_URL)
+        message = Message.objects.all().order_by("-id")
+        serializer = MessageSerializer(message, many=True)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_create_message(self):
+        """Test creating a new message"""
+        user1 = create_user(email="messagingtester3@example.com", password="testpass",username="messagingtester3")
+        profile1 = Profile.objects.get(username=user1.username)
+        self.client.force_authenticate(user1)
+        user2 = create_user(email="messagingtester4@example.com", password="testpass",username="messagingtester4")
+        profile2 = Profile.objects.get(username=user2.username)
+        payload = {"sender": profile1, "receiver": profile2, "message_body": "Test Message"}
+        res = self.client.post(MESSAGES_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data["message_body"], payload["message_body"])
+        self.assertEqual(res.data["sender"], payload["sender"])
+        self.assertEqual(res.data["receiver"], payload["receiver"])
