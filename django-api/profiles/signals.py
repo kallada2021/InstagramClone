@@ -18,7 +18,7 @@ def createProfile(sender, instance, created: bool, **kwargs):
         if user.lastname:
             lastname = user.lastname
         print(f"Profile {user.username}-FirstName {firstname}")
-        profile: Profile = Profile.objects.create(
+        Profile.objects.create(
             user=user,
             username=user.username,
             email=user.email,

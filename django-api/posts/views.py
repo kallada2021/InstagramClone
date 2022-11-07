@@ -47,16 +47,14 @@ class CommentsView(generics.GenericAPIView):
         try:
             id = self.kwargs.get("id")
             post = Post.objects.get(id=id)
-        except:
+        except:  # noqa
             return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
-            
 
-        # request.data._mutable = True
         comment = request.data
         user = request.user
         try:
-            profile = Profile.objects.get(username=user.username)   
-        except:
+            profile = Profile.objects.get(username=user.username)
+        except:  # noqa
             return Response({"detail": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
         Comment.objects.create(body=comment["body"], owner=profile, post=post)
@@ -74,13 +72,13 @@ class CommentsView(generics.GenericAPIView):
         try:
             id = self.kwargs.get("id")
             post = Post.objects.get(id=id)
-        except:
+        except:  # noqa
             return NotFound(detail="Post does not exist.", code=404)
 
         try:
             comments = Comment.objects.filter(post_id=post.id)
-        except:
-            return NotFound(detail="No comments found.", code=404)
+        except:  # noqa
+            return Response({"message": "No comments found."}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CommentSerializer(
             comments,
@@ -105,7 +103,7 @@ class CommentsUpdateDeleteView(generics.GenericAPIView):
         """Updates a comment"""
         try:
             comment = Comment.objects.get(id=commentid)
-        except:
+        except:  # noqa
             return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data
@@ -113,32 +111,36 @@ class CommentsUpdateDeleteView(generics.GenericAPIView):
         user = request.user
         try:
             profile = Profile.objects.get(username=user.username)
-        except:
+        except:  # noqa
             return Response({"detail": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
         if comment.owner != profile:
-            return Response({"message": "You are not authorized to delete this comment"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"message": "You are not authorized to delete this comment"}, status=status.HTTP_401_UNAUTHORIZED
+            )
         try:
             comment.save()
-            return Response( {"message": "Comment updated", "body": data["body"]}, status=status.HTTP_200_OK)
-        except:
+            return Response({"message": "Comment updated", "body": data["body"]}, status=status.HTTP_200_OK)
+        except:  # noqa
             return Response({"message": "Error updating comment"}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id, commentid):
         """Deletes a comment"""
         try:
             comment = Comment.objects.get(id=commentid)
-        except:
+        except:  # noqa
             return NotFound(detail="Comment does not exist.", code=404)
 
         user = request.user
         try:
             profile = Profile.objects.get(username=user.username)
-        except:
+        except:  # noqa
             return Response({"detail": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
         if comment.owner != profile:
-            return Response({"message": "You are not authorized to delete this comment"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"message": "You are not authorized to delete this comment"}, status=status.HTTP_401_UNAUTHORIZED
+            )
         comment.delete()
         return Response({"message": "Comment deleted"}, status=status.HTTP_204_NO_CONTENT)
 

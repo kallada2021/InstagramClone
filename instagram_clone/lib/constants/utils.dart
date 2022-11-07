@@ -47,3 +47,9 @@ class Utils {
   static const String s3Url =
       "https://portfolio-website-magnolia-bucket.s3.amazonaws.com/Images/";
 }
+
+enum LikeStatus {
+  all,
+  liked,
+  notLiked,
+}

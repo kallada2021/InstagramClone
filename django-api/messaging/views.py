@@ -14,6 +14,7 @@ from profiles.models import Profile
 #         messages = Message.objects.all()
 #         return Response({"messages": messages}, status=200)
 
+
 class MessageViewSet(
     mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
@@ -32,11 +33,10 @@ class MessageViewSet(
         """filters messages to user who created them"""
         user = self.request.user
         profile = Profile.objects.get(username=user.username)
-        messages = self.queryset.filter(owner=profile).order_by("-created_at")
+        messages = self.queryset.filter(sender=profile).order_by("-created_at")
         return messages
 
     def perform_create(self, serializer):
         auth_user = self.request.user
         profile = Profile.objects.get(username=auth_user.username)
-        serializer.save(owner=profile)
-
+        serializer.save(sender=profile)

@@ -51,6 +51,7 @@ Future<Post?> createOrUpdatePersonDialog(BuildContext context,
                 } else {
                   Navigator.of(context).pop(
                     Post(
+                      id: 1,
                       title: title!,
                       body: body!,
                       owner: getLoggedInUserProfile(),

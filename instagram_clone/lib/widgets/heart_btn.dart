@@ -10,6 +10,7 @@ class HeartBTN extends StatelessWidget {
   HeartBTN({
     Key? key,
     required this.postId,
+    isClicked = false,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
