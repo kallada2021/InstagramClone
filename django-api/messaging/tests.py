@@ -104,10 +104,20 @@ class PrivateMessagesApiTests(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data, serializer.data)
 
-    # TODO test other users can't see someone else message
+
     def test_other_user_get_message_error(self):
         """Tests that other users can't see other's messages"""
-        pass
+        user1 = create_user(email="messagingtester1@example.com", password="testpass", username="messagingtester1")
+        profile1 = Profile.objects.get(username=user1.username)
+        user2 = create_user(email="messagingtester2@example.com", password="testpass", username="messagingtester2")
+        profile2 = Profile.objects.get(username=user2.username)
+        self.client.force_authenticate(self.user)
+        messages = Message.objects.create(sender_id=profile1.id, receiver_id=profile2.id, message_body="Test Message")
+        res = self.client.get(MESSAGES_URL)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 0)
+
+       
 
     def test_create_message(self):
         """Test creating a new message"""
@@ -128,3 +138,34 @@ class PrivateMessagesApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res.data["message_body"], payload["message_body"])
         self.assertEqual(res.data["sender"]["username"], profile1.username)
+
+    def test_update_message(self):
+        """Test updating a message"""
+        user1 = create_user(email="updatemessaginguser1@example.com", password="testpass1", username="updatemessaginguser1")
+        profile1 = Profile.objects.get(username=user1.username)
+        self.client.force_authenticate(user1)
+        user2 = create_user(email="updatemessaginguser2@example.com", password="testpass2", username="updatemessaginguser2")
+        profile2 = Profile.objects.get(username=user2.username)
+        message = create_message(sender_id=profile1.id, receiver_id=profile2.id, message_body="Test Message")
+        payload = {
+            "message_body": "Message Body",
+        }
+        url = detail_url(message.id)
+        res = self.client.patch(url, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data["message_body"], payload["message_body"])
+
+    def test_delete_message(self):
+        """Test deleting a message"""
+        user1 = create_user(email="deletemessaginguser1@example.com", password="testpass1", username="deletemessaginguser1")
+        profile1 = Profile.objects.get(username=user1.username)
+        self.client.force_authenticate(user1)
+        user2 = create_user(email="deletemessaginguser2@example.com", password="testpass2", username="deletemessaginguser2")
+        profile2 = Profile.objects.get(username=user2.username)
+        message = create_message(sender_id=profile1.id, receiver_id=profile2.id, message_body="Test Message")
+        url = detail_url(message.id)
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Message.objects.filter(id=message.id).exists())
+
+

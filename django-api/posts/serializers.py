@@ -14,13 +14,13 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ["id", "owner", "owner_id", "title", "body", "created_at", "updated_at"]
         # read_only_fields = ["id"]
 
-    def create(self, **validated_data):
-        """Create a Post"""
-        auth_user = self.context["request"].user
-        profile = Profile.objects.get(username=auth_user.username)
+    # def create(self, **validated_data):
+    #     """Create a Post"""
+    #     auth_user = self.context["request"].user
+    #     profile = Profile.objects.get(username=auth_user.username)
 
-        post = Post.objects.create(profile, **validated_data)
-        return post
+    #     post = Post.objects.create(**validated_data)
+    #     return post
 
 
 class CommentSerializer(serializers.ModelSerializer):

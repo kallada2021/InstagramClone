@@ -101,7 +101,18 @@ class PrivateTAgsAPITests(TestCase):
         self.assertEquals(res.status_code, status.HTTP_200_OK)
         self.assertEquals(res.data, serializer.data)
 
-    # TODO: Write a test for creating a new post
+
+    def test_create_post_successful(self):
+        """Test creating a new post"""
+        user = create_user(username="testingpostsuser1", email="profilecreateuser@example.com")
+        profile = Profile.objects.get(username=user.username)
+        self.client.force_authenticate(user)
+        payload = {"title": "Test Post", "body": "Test Body", "owner_id": profile.id}
+        res = self.client.post(POSTS_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        exists = Post.objects.filter(owner=profile, title="Test Post").exists()
+        self.assertTrue(exists)
+
 
     def test_post_update(self):
         """Updating Post"""
