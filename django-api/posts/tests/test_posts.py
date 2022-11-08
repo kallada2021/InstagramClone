@@ -101,6 +101,8 @@ class PrivateTAgsAPITests(TestCase):
         self.assertEquals(res.status_code, status.HTTP_200_OK)
         self.assertEquals(res.data, serializer.data)
 
+    # TODO: Write a test for creating a new post
+
     def test_post_update(self):
         """Updating Post"""
         user = create_user(username="testingpostsuser2", email="poststester2@example.com")

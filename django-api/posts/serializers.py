@@ -7,10 +7,11 @@ from .models import Comment, Post
 
 class PostSerializer(serializers.ModelSerializer):
     owner = ProfileSerializer(many=False, required=False)
+    owner_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Post
-        fields = ["id", "owner", "title", "body", "created_at", "updated_at"]
+        fields = ["id", "owner", "owner_id", "title", "body", "created_at", "updated_at"]
         # read_only_fields = ["id"]
 
     def create(self, **validated_data):
