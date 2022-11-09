@@ -7,7 +7,7 @@ from .models import Message
 class MessageSerializer(serializers.ModelSerializer):
     """Serializes Message Model"""
 
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField()
     sender_id = serializers.IntegerField(write_only=True)
     receiver_id = serializers.IntegerField(write_only=True)
     # sender = ProfileSerializer(many=False, required=False, read_only=True)
@@ -25,4 +25,4 @@ class MessageSerializer(serializers.ModelSerializer):
             "time",
         )
 
-        read_only = ["id"]
+        # read_only = ["id"]

@@ -5,13 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: /Start
-    # logging:
-    #   driver: "awslogs"
-    #   options:
-    #     awslogs-region: "us-east-1"
-    #     awslogs-group: "Add Log Name here"
-    #     awslogs-stream: "Add Stream here"
+    # command: /Start
+      args:
+       - DEV=true
     container_name: api
     volumes:
       - .:/app
@@ -19,10 +15,37 @@ services:
       - media-volume:/app/mediafiles
     expose:
       - "8000"
-    env_file:
-      - ./.env
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py collectstatic --noinput &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=devdb
+      - DB_USER=postgres
+      - DB_PASS=changeme
+    # env_file:
+      # - ./.env
+    depends_on:
+      - postgres
     networks:
       - instagram-clone
+
+  postgres:
+    image: postgres:13.4-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: devdb
+    networks:
+      - instagram-clone
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
 
   nginx:
     restart: always
@@ -40,6 +63,7 @@ services:
       - instagram-clone
 
 
+
 networks:
   instagram-clone:
     driver: bridge
@@ -47,3 +71,4 @@ networks:
 volumes:
   static-volume:
   media-volume:
+  dev-db-data:
