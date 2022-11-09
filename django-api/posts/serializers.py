@@ -6,13 +6,23 @@ from .models import Comment, Post
 
 
 class PostSerializer(serializers.ModelSerializer):
-    owner = ProfileSerializer(many=False, required=False)
+    # owner = ProfileSerializer(many=False, required=False)
+    # owner = serializers.ReadOnlyField(source="owner.username")
     owner_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Post
-        fields = ["id", "owner", "owner_id", "title", "body", "created_at", "updated_at"]
-        # read_only_fields = ["id"]
+        fields = [
+            # "id",
+            # "owner",
+            "owner_id",
+            "title",
+            "body",
+            # "created_at",
+            # "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+        write_only_fields = ["created_at"]
 
     # def create(self, **validated_data):
     #     """Create a Post"""
@@ -24,13 +34,19 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    post = serializers.ReadOnlyField(source="posts.post.title")
-    owner = serializers.ReadOnlyField(source="profiles.profile.username")
+    # post = serializers.ReadOnlyField(source="post.title")
+    # owner = serializers.ReadOnlyField(source="owner.username")
 
     class Meta:
         model = Comment
-        fields = ["id", "owner", "post", "body", "created_at", "updated_at"]
-        # read_only_fields = ["id", "owner", "post"]
+        fields = [
+            "body",
+            "id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+        # write_only_fields = ["created_at", "updated_at", "id"]
 
 
 class UpdateDeleteCommentsSerializer(serializers.ModelSerializer):

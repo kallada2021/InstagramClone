@@ -5,7 +5,7 @@ from .models import Profile
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display: tuple = ("username", "email", "firstname")
+    list_display: tuple = ("username", "email", "firstname", "id")
 
 
 admin.site.register(Profile, ProfileAdmin)

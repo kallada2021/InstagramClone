@@ -112,7 +112,13 @@ class PrivateUserApiTests(TestCase):
         res = self.client.get(ME_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEquals(
-            res.data, {"username": "Test", "email": "admin@example.com", "firstname": "Tester", "lastname": ""}
+            res.data,
+            {
+                "username": "Test",
+                "email": "admin@example.com",
+                "firstname": "Tester",
+                "lastname": "",
+            },
         )
 
     def test_update_user_profile_firstname(self):

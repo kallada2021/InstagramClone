@@ -76,7 +76,7 @@ class PublicPostsApiTests(TestCase):
         self.assertEqual(str(post), post.title)
 
 
-class PrivateTAgsAPITests(TestCase):
+class PrivatePostsAPITests(TestCase):
     """Test authenticated API requests"""
 
     def setUp(self) -> None:
@@ -101,7 +101,6 @@ class PrivateTAgsAPITests(TestCase):
         self.assertEquals(res.status_code, status.HTTP_200_OK)
         self.assertEquals(res.data, serializer.data)
 
-
     def test_create_post_successful(self):
         """Test creating a new post"""
         user = create_user(username="testingpostsuser1", email="profilecreateuser@example.com")
@@ -112,7 +111,6 @@ class PrivateTAgsAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         exists = Post.objects.filter(owner=profile, title="Test Post").exists()
         self.assertTrue(exists)
-
 
     def test_post_update(self):
         """Updating Post"""
@@ -138,7 +136,7 @@ class PrivateTAgsAPITests(TestCase):
         user2 = create_user(username="other123", email="user2@example.com")
         profile2 = Profile.objects.get(username=user2.username)
 
-        post = Post.objects.create(owner=profile, title="Test Post")
+        post = Post.objects.create(owner=profile, title="Test Post", body="Test")
         Post.objects.create(owner=profile2, title="Test Day")
 
         res = self.client.get(POSTS_URL)
@@ -146,7 +144,7 @@ class PrivateTAgsAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]["title"], post.title)
-        self.assertEqual(res.data[0]["id"], post.id)
+        self.assertEqual(res.data[0]["body"], post.body)
 
     def test_delete_post(self):
         """Test deleting a post."""

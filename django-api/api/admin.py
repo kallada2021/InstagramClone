@@ -10,7 +10,7 @@ class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
 
     ordering = ["id"]
-    list_display: tuple = ["email", "username"]
+    list_display: tuple = ["email", "username", "id"]
     fieldsets = (
         (
             None,

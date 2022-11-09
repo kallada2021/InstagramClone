@@ -81,7 +81,6 @@ class PublicCommentsApiTests(TestCase):
         self.assertEqual(comment.body, "Test Comment")
 
 
-# TODO: create tests for private endpoints based on comments model
 class PrivateCommentsApiTests(TestCase):
     """Comments API private endpoint tests"""
 

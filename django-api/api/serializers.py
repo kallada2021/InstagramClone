@@ -9,7 +9,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["username", "email", "password", "firstname", "lastname"]
+        fields = [
+            "username",
+            "email",
+            "password",
+            "firstname",
+            "lastname",
+        ]
+        read_only_fields = ["id"]
         extra_kwargs = {"password": {"write_only": True, "min_length": 7}}
 
     def create(self, validated_data):
