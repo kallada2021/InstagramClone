@@ -23,7 +23,11 @@ class PublicUserApiTests(TestCase):
 
     def test_create_user_success(self):
         """Test creating a user"""
-        payload: dict = {"username": "Test", "email": "admin@example.com", "password": "Testp12"}
+        payload: dict = {
+            "username": "Test",
+            "email": "admin@example.com",
+            "password": "Testp12",
+        }
         res = self.client.post(CREATE_USER_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
@@ -118,6 +122,7 @@ class PrivateUserApiTests(TestCase):
                 "email": "admin@example.com",
                 "firstname": "Tester",
                 "lastname": "",
+                "id": 1,
             },
         )
 
