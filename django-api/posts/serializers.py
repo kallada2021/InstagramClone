@@ -13,16 +13,16 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            # "id",
+            "id",
             # "owner",
             "owner_id",
             "title",
             "body",
-            # "created_at",
-            # "updated_at",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
-        write_only_fields = ["created_at"]
+        # write_only_fields = ["created_at"]
 
     # def create(self, **validated_data):
     #     """Create a Post"""
