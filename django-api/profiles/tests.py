@@ -141,7 +141,7 @@ class PrivateProfilesAPITests(TestCase):
             password="password123",
         )
         res = self.client.get(GET_USER_BY_USERNAME_URL, {"username": user2.username})
-        #serializer = ProfileSerializer(res.data)
+        # serializer = ProfileSerializer(res.data)
         print("response", res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
@@ -214,4 +214,3 @@ class PrivateProfilesAPITests(TestCase):
         self.assertTrue(Profile.objects.filter(username=user2.username).exists())
 
     # TODO: test query profile by username
-
