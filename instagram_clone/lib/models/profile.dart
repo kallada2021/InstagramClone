@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:instagram_clone/models/user_id.dart';
 
 class Profile extends Equatable {
-  final int id;
+  final UserId id;
   final String firstname;
   final String lastname;
   final String username;

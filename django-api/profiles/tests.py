@@ -123,6 +123,28 @@ class PrivateProfilesAPITests(TestCase):
         self.assertEqual(len(serializer.data), 3)
         self.assertEqual(res.data, serializer.data)
 
+    def test_query_profile_by_username(self):
+        """Tests querying a user by username"""
+        user = create_user(
+            username="testuser",
+            email="test123@example.com",
+            password="password123",
+        )
+
+        self.client.force_authenticate(user)
+
+        user2 = create_user(
+            username="testuser1",
+            email="test12345@example.com",
+            firstname="earthling",
+            password="password123",
+        )
+        res = self.client.get(GET_PROFILES_URL, {"username": user2.username})
+        serializer = ProfileSerializer(res.data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(len(serializer.data), 1)
+
     def test_get_profile_detail_by_id(self):
         """Tests getting a profle by id"""
         user = create_user(
@@ -175,19 +197,18 @@ class PrivateProfilesAPITests(TestCase):
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
 
-    # TODO: write a test to check a user can not delete another user's profile
     def test_delete_profile_not_allowed(self):
         """Test deleting a profile not allowed"""
-        # user = self.user
-        # self.client.force_authenticate(user)
         user2 = get_user_model().objects.create_user(
             username="testuser2",
             email="test7890@example.com",
             password="testpass123",
         )
         profile = Profile.objects.get(username=user2.username)
-        # profile = create_profile(username="testuser1", email="test12345@example.com")
+
         url = detail_url(profile.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertTrue(Profile.objects.filter(username=user2.username).exists())
+
+    # TODO: test query profile by username

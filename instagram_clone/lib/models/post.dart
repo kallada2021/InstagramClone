@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instagram_clone/models/profile.dart';
+import 'package:instagram_clone/models/user_id.dart';
 
 class Post extends Equatable {
   int id;
@@ -11,6 +12,7 @@ class Post extends Equatable {
   int likes;
   bool isLiked;
   // TODO: add rest of fields
+
   Post({
     required this.owner,
     required this.title,

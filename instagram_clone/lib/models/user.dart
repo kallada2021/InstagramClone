@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:instagram_clone/models/user_id.dart';
 
 class User extends Equatable {
-  int? id;
+  UserId? id;
   String? firstname;
   String? lastname;
   String? username;
