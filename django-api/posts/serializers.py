@@ -1,13 +1,8 @@
-from profiles.models import Profile
-from profiles.serializers import ProfileSerializer
 from rest_framework import serializers
-
 from .models import Comment, Post
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # owner = ProfileSerializer(many=False, required=False)
-    # owner = serializers.ReadOnlyField(source="owner.username")
     owner_id = serializers.IntegerField(write_only=True)
 
     class Meta:

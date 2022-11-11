@@ -111,7 +111,7 @@ class PrivateMessagesApiTests(TestCase):
         user2 = create_user(email="messagingtester2@example.com", password="testpass", username="messagingtester2")
         profile2 = Profile.objects.get(username=user2.username)
         self.client.force_authenticate(self.user)
-        messages = Message.objects.create(sender_id=profile1.id, receiver_id=profile2.id, message_body="Test Message")
+        Message.objects.create(sender_id=profile1.id, receiver_id=profile2.id, message_body="Test Message")
         res = self.client.get(MESSAGES_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 0)

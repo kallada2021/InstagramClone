@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from .models import Profile
 
 
+# Extening swagger documentation to accept query parameters
 @extend_schema(
     parameters=[
         OpenApiParameter(

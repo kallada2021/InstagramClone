@@ -1,4 +1,4 @@
-from profiles.serializers import ProfileSerializer
+# from profiles.serializers import ProfileSerializer
 from rest_framework import serializers
 
 from .models import Message
