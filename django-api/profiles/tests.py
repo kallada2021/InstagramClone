@@ -10,6 +10,7 @@ from .serializers import ProfileDetailSerializer, ProfileSerializer
 
 PROFILES_URL = reverse("profile:profile-list")
 GET_PROFILES_URL = reverse("profile:get-profiles")
+GET_USER_BY_USERNAME_URL = reverse("profile:getuserbyusername")
 
 
 def detail_url(profile_id):
@@ -139,11 +140,12 @@ class PrivateProfilesAPITests(TestCase):
             firstname="earthling",
             password="password123",
         )
-        res = self.client.get(GET_PROFILES_URL, {"username": user2.username})
-        serializer = ProfileSerializer(res.data)
+        res = self.client.get(GET_USER_BY_USERNAME_URL, {"username": user2.username})
+        #serializer = ProfileSerializer(res.data)
+        print("response", res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(serializer.data), 1)
+        self.assertEqual(len(res.data), 1)
 
     def test_get_profile_detail_by_id(self):
         """Tests getting a profle by id"""
@@ -212,3 +214,4 @@ class PrivateProfilesAPITests(TestCase):
         self.assertTrue(Profile.objects.filter(username=user2.username).exists())
 
     # TODO: test query profile by username
+
