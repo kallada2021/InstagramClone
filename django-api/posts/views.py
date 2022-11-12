@@ -1,10 +1,11 @@
+from django.db.models import Q
 from profiles.models import Profile
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 
 from .models import Comment, Post
 from .serializers import CommentSerializer, PostSerializer
@@ -173,9 +174,20 @@ class CommentsUpdateDeleteView(generics.GenericAPIView):
 #     #     profile = Profile.objects.get(username=auth_user.username)
 #     #     serializer.save(owner=profile)
 
+
 @api_view(["GET"])
 def get_all_posts(request):
     """Returns all posts"""
     posts = Post.objects.all().order_by("-created_at")
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# TODO: add permissions, schema annotations, url and test
+@api_view(["POST"])
+def get_posts_by_search(request):
+    """Returns posts based on search queries"""
+    search = request.query_params.get("search")
+    posts = Post.objects.filter(Q(title__icontains=search) | Q(body__icontains=search))
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

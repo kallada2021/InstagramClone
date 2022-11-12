@@ -212,5 +212,3 @@ class PrivateProfilesAPITests(TestCase):
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertTrue(Profile.objects.filter(username=user2.username).exists())
-
-    # TODO: test query profile by username
